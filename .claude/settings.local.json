@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "Bash(cp \"/c/Users/muyideen olawumi/OneDrive/Desktop/coinova-raw-images/Hero1.avif\" \"/c/Users/muyideen olawumi/Desktop/coinova/src/assets/hero1.avif\")",
+      "Bash(cp \"/c/Users/muyideen olawumi/OneDrive/Desktop/coinova-raw-images/Hero2.avif\" \"/c/Users/muyideen olawumi/Desktop/coinova/src/assets/hero2.avif\")",
+      "Bash(cp \"/c/Users/muyideen olawumi/OneDrive/Desktop/coinova-raw-images/logo.jpeg\" \"/c/Users/muyideen olawumi/Desktop/coinova/src/assets/logo.jpeg\")",
+      "Bash(npx eslint *)",
+      "Bash(node scripts/create-cnc-logo.js)",
+      "Bash(mv \"C:\\\\Users\\\\muyideen olawumi\\\\OneDrive\\\\Desktop\\\\coinova\\\\scripts\\\\create-cnc-logo.js\" \"C:\\\\Users\\\\muyideen olawumi\\\\OneDrive\\\\Desktop\\\\coinova\\\\scripts\\\\create-cnc-logo.cjs\")",
+      "Bash(node scripts/create-cnc-logo.cjs)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(findstr /C:\"build\" /C:\"resend\")"
+    ]
+  }
+}

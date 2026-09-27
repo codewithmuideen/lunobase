@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
+    <meta name="description" content="Cointehera - Your trusted crypto trading and investment platform. Trade 250+ cryptocurrencies with demo and live accounts." />
+    <meta name="keywords" content="crypto, bitcoin, ethereum, invest, trading, cointehera" />
+    <meta property="og:title" content="Cointehera - Trade Crypto. Build Wealth." />
+    <meta property="og:description" content="Trade crypto. Build wealth." />
+    <meta property="og:image" content="/logo.jpeg" />
+    <meta property="og:url" content="https://cointehera.com" />
+    <meta property="og:site_name" content="Cointehera" />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href="https://cointehera.com" />
+    <meta name="robots" content="index, follow" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cointehera - Trade Crypto. Build Wealth." />
+    <meta name="twitter:description" content="Trade 250+ cryptocurrencies with demo and live accounts. Buy Coinova Coin (CNC) at presale price. Get $10,000 demo funds free." />
+    <meta name="twitter:image" content="https://cointehera.com/logo.jpeg" />
+
+    <!-- PWA Core -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0052FF" />
+
+    <!-- iOS Safari specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Cointehera" />
+    <link rel="apple-touch-icon" href="/logo.jpeg" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/logo.jpeg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo.jpeg" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/logo.jpeg" />
+
+    <!-- iOS Splash Screens -->
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <link rel="apple-touch-startup-image" href="/logo.jpeg" />
+
+    <!-- Windows/Edge -->
+    <meta name="msapplication-TileColor" content="#0052FF" />
+    <meta name="msapplication-TileImage" content="/logo.jpeg" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- Firefox/Android -->
+    <link rel="icon" type="image/jpeg" sizes="192x192" href="/logo.jpeg" />
+    <link rel="icon" type="image/jpeg" sizes="512x512" href="/logo.jpeg" />
+
+    <!-- General -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Cointehera" />
+    <meta name="format-detection" content="telephone=no" />
+    <style>
+      #splash {
+        position: fixed;
+        inset: 0;
+        background: #0A0B0D;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        transition: opacity 0.5s;
+      }
+      #splash img {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+      }
+      #splash h1 {
+        color: #fff;
+        font-size: 24px;
+        font-weight: 700;
+        font-family: Inter, sans-serif;
+        margin: 0;
+      }
+      #splash p {
+        color: #8A919E;
+        font-size: 14px;
+        font-family: Inter, sans-serif;
+        margin-top: 8px;
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <title>Cointehera - Trade Crypto. Build Wealth.</title>
+  </head>
+  <body>
+    <div id="splash">
+      <img src="/logo.jpeg" alt="Cointehera" />
+      <h1>Cointehera</h1>
+      <p>Trade Crypto. Build Wealth.</p>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var splash = document.getElementById('splash');
+          if (splash) {
+            splash.style.opacity = '0';
+            setTimeout(function() { splash.remove(); }, 500);
+          }
+        }, 1500);
+      });
+    </script>
+  </body>
+</html>
