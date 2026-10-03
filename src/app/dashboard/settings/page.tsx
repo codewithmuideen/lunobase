@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { formatDate, shortId } from "@/lib/utils";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { PreferencesForm, ProfileForm } from "@/components/dashboard/settings-forms";
+import { AvatarUploader } from "@/components/dashboard/avatar-uploader";
 import { StatusBadge } from "@/components/ui/badge";
 
 export const metadata = { title: "Settings" };
@@ -15,6 +16,9 @@ export default async function SettingsPage() {
         <div className="space-y-6">
           <section className="card p-5 sm:p-6">
             <h2 className="font-semibold text-white">Profile</h2>
+            <div className="mt-5 border-b border-white/5 pb-6">
+              <AvatarUploader src={profile.avatar_url ?? null} name={profile.full_name} email={profile.email} />
+            </div>
             <div className="mt-5">
               <ProfileForm profile={profile} />
             </div>

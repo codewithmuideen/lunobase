@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowDownToLine, ChevronDown, LogOut, Menu, Settings, ShieldCheck, ShieldHalf, X } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { ButtonLink } from "@/components/ui/button";
+import { Avatar } from "@/components/ui/avatar";
 import { signOutAction } from "@/actions/auth";
 import { cn } from "@/lib/utils";
 import type { Profile } from "@/lib/types";
@@ -17,22 +18,12 @@ function isActive(pathname: string, href: string) {
   return href === "/dashboard" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function initials(name: string | null, email: string) {
-  const src = name?.trim() || email;
-  return src
-    .split(/\s+/)
-    .map((s) => s[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
 export function DashboardShell({
   profile,
   unread: initialUnread,
   children,
 }: {
-  profile: Pick<Profile, "id" | "email" | "full_name" | "role" | "status">;
+  profile: Pick<Profile, "id" | "email" | "full_name" | "role" | "status" | "avatar_url">;
   unread: number;
   children: React.ReactNode;
 }) {
@@ -171,7 +162,7 @@ export function DashboardShell({
   );
 }
 
-function UserMenu({ profile: p }: { profile: Pick<Profile, "id" | "email" | "full_name" | "role" | "status"> }) {
+function UserMenu({ profile: p }: { profile: Pick<Profile, "id" | "email" | "full_name" | "role" | "status" | "avatar_url"> }) {
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -183,17 +174,18 @@ function UserMenu({ profile: p }: { profile: Pick<Profile, "id" | "email" | "ful
     }, []);
     return (
       <div ref={ref} className="relative">
-        <button onClick={() => setOpen((v) => !v)} className="flex items-center gap-2 rounded-xl p-1 pr-2 transition hover:bg-white/5" aria-label="Account menu">
-          <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-xs font-bold text-white">
-            {initials(p.full_name, p.email)}
-          </span>
+        <button onClick={() => setOpen((v) => !v)} className="flex items-center gap-1.5 rounded-full p-0.5 pr-1.5 transition hover:bg-white/5" aria-label="Account menu">
+          <Avatar src={p.avatar_url} name={p.full_name} email={p.email} />
           <ChevronDown className="hidden size-4 text-muted sm:block" />
         </button>
         {open && (
           <div className="absolute right-0 top-12 z-50 w-64 overflow-hidden rounded-2xl border border-white/10 bg-ink-800 shadow-2xl animate-fade-up">
-            <div className="border-b border-white/5 px-4 py-3">
-              <p className="truncate text-sm font-semibold text-white">{p.full_name ?? "Lunobase user"}</p>
-              <p className="truncate text-xs text-slate">{p.email}</p>
+            <div className="flex items-center gap-3 border-b border-white/5 px-4 py-3">
+              <Avatar src={p.avatar_url} name={p.full_name} email={p.email} className="size-10" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-white">{p.full_name ?? "Lunobase user"}</p>
+                <p className="truncate text-xs text-slate">{p.email}</p>
+              </div>
             </div>
             <div className="p-1.5">
               {[

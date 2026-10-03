@@ -9,7 +9,7 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com",
+  `img-src 'self' data: blob: https://coin-images.coingecko.com https://assets.coingecko.com ${supabaseUrl}`,
   "font-src 'self' data:",
   `connect-src 'self' ${supabaseUrl} ${supabaseWs} https://challenges.cloudflare.com`,
   "frame-src https://challenges.cloudflare.com",

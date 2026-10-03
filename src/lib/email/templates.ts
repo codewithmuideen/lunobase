@@ -1,7 +1,12 @@
+import { SITE_URL } from "@/lib/env";
+
 // Branded transactional email templates. Table-based HTML for maximum client support.
 
-const ASSET_BASE = "https://lunobase.com"; // emails must reference a public URL, even in dev
-const APP_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://lunobase.com").replace(/\/$/, "");
+const APP_URL = SITE_URL;
+// Email images must load from a public address. In local dev the site is on localhost,
+// which mail clients can't reach, so fall back to the deployed app.
+const ASSET_BASE = /localhost|127\.0\.0\.1/.test(SITE_URL) ? "https://lunobase.vercel.app" : SITE_URL;
+const YEAR = new Date().getFullYear();
 
 export type EmailContent = { subject: string; html: string; text: string };
 
@@ -31,19 +36,36 @@ function layout({ preheader, title, body, cta, antiPhishing, footerNote }: Layou
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EEF1F7;padding:32px 12px">
 <tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #E3E7F0">
-<tr><td style="background:#0B0F19;padding:26px 40px"><img src="${ASSET_BASE}/brand/logo-white.png" alt="Lunobase" height="28" style="display:block;height:28px;width:auto;border:0"></td></tr>
-<tr><td style="height:4px;background:linear-gradient(90deg,#0052FF,#4F7FFF)"></td></tr>
+<tr><td bgcolor="#0B0F19" style="background:#0B0F19;padding:26px 40px"><a href="${APP_URL}" style="text-decoration:none"><img src="${ASSET_BASE}/brand/email-logo.png" alt="Lunobase" width="105" height="38" style="display:block;width:105px;height:38px;border:0;outline:none;color:#ffffff;font:700 20px Arial,sans-serif"></a></td></tr>
+<tr><td style="height:4px;background:#0052FF;background:linear-gradient(90deg,#0052FF,#4F7FFF);font-size:0;line-height:0">&nbsp;</td></tr>
 <tr><td style="padding:36px 40px 8px;font:700 22px/1.3 Inter,Arial,sans-serif;color:#0B0F19">${esc(title)}</td></tr>
 <tr><td style="padding:4px 40px 20px;font:400 15px/1.65 Inter,Arial,sans-serif;color:#3B4252">${body}</td></tr>
 ${ctaBlock}
 ${antiPhishingBlock}
-<tr><td style="padding:20px 40px 32px;font:400 12px/1.6 Inter,Arial,sans-serif;color:#9498A1">${footerNote ?? "If you didn't request this, secure your account immediately by changing your password and contacting support."}</td></tr>
+<tr><td style="padding:16px 40px 4px;font:400 12px/1.6 Inter,Arial,sans-serif;color:#9498A1">${footerNote ?? "If you didn't request this, secure your account immediately by changing your password and contacting support."}</td></tr>
+<tr><td style="padding:20px 40px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:1px solid #E9EDF5;font-size:0;line-height:0">&nbsp;</td></tr></table></td></tr>
+<tr><td style="padding:18px 40px 30px">
+<table role="presentation" cellpadding="0" cellspacing="0"><tr>
+<td width="44" valign="middle"><img src="${ASSET_BASE}/brand/app-icon-192.png" alt="" width="44" height="44" style="display:block;width:44px;height:44px;border-radius:12px;border:0"></td>
+<td valign="middle" style="padding-left:14px;font:400 13px/1.5 Inter,Arial,sans-serif;color:#6B7185">
+<span style="font:600 14px/1.4 Inter,Arial,sans-serif;color:#0B0F19">The Lunobase Team</span><br>
+Secure digital asset platform<br>
+<a href="mailto:contact@lunobase.com" style="color:#0052FF;text-decoration:none">contact@lunobase.com</a>
+</td>
+</tr></table>
+</td></tr>
 </table>
-<table role="presentation" width="100%" style="max-width:560px"><tr><td style="padding:20px 12px;text-align:center;font:400 11px/1.6 Inter,Arial,sans-serif;color:#9498A1">
-Lunobase · Secure digital asset platform<br>
-Lunobase staff will never ask for your password, verification codes or seed phrase.<br>
-Support: <a href="mailto:contact@lunobase.com" style="color:#4F7FFF;text-decoration:none">contact@lunobase.com</a> · Payments: <a href="mailto:payment@lunobase.com" style="color:#4F7FFF;text-decoration:none">payment@lunobase.com</a><br>
-<a href="${APP_URL}" style="color:#4F7FFF;text-decoration:none">lunobase.com</a>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px"><tr><td style="padding:22px 16px 8px;text-align:center;font:400 12px/1.7 Inter,Arial,sans-serif;color:#9498A1">
+<a href="${APP_URL}/dashboard" style="color:#4F6BB5;text-decoration:none">Dashboard</a> &nbsp;·&nbsp;
+<a href="${APP_URL}/support" style="color:#4F6BB5;text-decoration:none">Help center</a> &nbsp;·&nbsp;
+<a href="${APP_URL}/security" style="color:#4F6BB5;text-decoration:none">Security</a> &nbsp;·&nbsp;
+<a href="${APP_URL}/legal/privacy" style="color:#4F6BB5;text-decoration:none">Privacy</a>
+</td></tr>
+<tr><td style="padding:4px 16px 24px;text-align:center;font:400 11px/1.7 Inter,Arial,sans-serif;color:#A3A8B5">
+Lunobase staff will never ask for your password, login codes or recovery phrase.<br>
+Payments: <a href="mailto:payment@lunobase.com" style="color:#8A90A0;text-decoration:underline">payment@lunobase.com</a> &nbsp;·&nbsp; General: <a href="mailto:info@lunobase.com" style="color:#8A90A0;text-decoration:underline">info@lunobase.com</a><br>
+You received this email because you have a Lunobase account.<br>
+&copy; ${YEAR} Lunobase. All rights reserved.
 </td></tr></table>
 </td></tr></table></body></html>`;
 }

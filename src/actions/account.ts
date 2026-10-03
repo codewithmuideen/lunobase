@@ -139,3 +139,78 @@ export async function toggleWatchlistAction(coinId: string): Promise<ActionResul
   revalidatePath("/dashboard", "layout");
   return { ok: true, data: { watching: !data } };
 }
+
+// ---------------------------------------------------------------------------
+// Profile photo
+// ---------------------------------------------------------------------------
+const AVATAR_BUCKET = "avatars";
+const AVATAR_MAX_BYTES = 600 * 1024; // the browser resizes to 320px first, so real uploads are ~20-60 KB
+
+/** Identify the image by its magic bytes; never trust the file name or declared type. */
+function sniffImage(bytes: Uint8Array): { ext: string; mime: string } | null {
+  const b = bytes;
+  if (b.length > 12 && b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) {
+    return { ext: "webp", mime: "image/webp" };
+  }
+  if (b.length > 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return { ext: "jpg", mime: "image/jpeg" };
+  if (b.length > 8 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return { ext: "png", mime: "image/png" };
+  return null;
+}
+
+async function clearAvatarFiles(userId: string, keep?: string) {
+  const storage = createAdminClient().storage.from(AVATAR_BUCKET);
+  const { data } = await storage.list(userId);
+  const stale = (data ?? []).map((f) => `${userId}/${f.name}`).filter((p) => p !== keep);
+  if (stale.length) await storage.remove(stale);
+}
+
+export async function uploadAvatarAction(formData: FormData): Promise<ActionResult<{ url: string }>> {
+  const ctx = await currentUser();
+  if (!ctx) return EXPIRED;
+  const file = formData.get("avatar");
+  if (!(file instanceof File) || file.size === 0) return { ok: false, error: "Choose an image first." };
+  if (file.size > AVATAR_MAX_BYTES) return { ok: false, error: "That image is too large. Please choose a smaller one." };
+  if (!(await rateLimit(`avatar:${ctx.profile.id}`, 12, 3600))) {
+    return { ok: false, error: "You've changed your photo a lot recently. Please try again later." };
+  }
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const kind = sniffImage(bytes);
+  if (!kind) return { ok: false, error: "Only JPG, PNG or WebP images are allowed." };
+
+  const db = createAdminClient();
+  const path = `${ctx.profile.id}/${Date.now()}.${kind.ext}`;
+  const { error } = await db.storage.from(AVATAR_BUCKET).upload(path, bytes, {
+    contentType: kind.mime,
+    cacheControl: "31536000",
+    upsert: false,
+  });
+  if (error) {
+    console.error("[avatar] upload", error.message);
+    return { ok: false, error: "Could not upload your photo. Please try again." };
+  }
+
+  const url = db.storage.from(AVATAR_BUCKET).getPublicUrl(path).data.publicUrl;
+  const { error: metaError } = await db.auth.admin.updateUserById(ctx.profile.id, { user_metadata: { avatar_url: url } });
+  if (metaError) {
+    await db.storage.from(AVATAR_BUCKET).remove([path]);
+    return { ok: false, error: "Could not save your photo. Please try again." };
+  }
+  await clearAvatarFiles(ctx.profile.id, path);
+
+  revalidatePath("/dashboard", "layout");
+  revalidatePath("/admin", "layout");
+  return { ok: true, data: { url }, message: "Profile photo updated." };
+}
+
+export async function removeAvatarAction(): Promise<ActionResult> {
+  const ctx = await currentUser();
+  if (!ctx) return EXPIRED;
+  const db = createAdminClient();
+  const { error } = await db.auth.admin.updateUserById(ctx.profile.id, { user_metadata: { avatar_url: null } });
+  if (error) return { ok: false, error: "Could not remove your photo." };
+  await clearAvatarFiles(ctx.profile.id);
+  revalidatePath("/dashboard", "layout");
+  revalidatePath("/admin", "layout");
+  return { ok: true, message: "Profile photo removed." };
+}

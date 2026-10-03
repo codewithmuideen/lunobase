@@ -13,7 +13,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const unread = await getUnreadCount(profile.id);
   return (
     <DashboardShell
-      profile={{ id: profile.id, email: profile.email, full_name: profile.full_name, role: profile.role, status: profile.status }}
+      profile={{ id: profile.id, email: profile.email, full_name: profile.full_name, role: profile.role, status: profile.status, avatar_url: profile.avatar_url }}
       unread={unread}
     >
       {children}

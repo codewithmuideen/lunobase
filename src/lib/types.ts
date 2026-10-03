@@ -17,6 +17,8 @@ export type Profile = {
   trade_emails: boolean;
   last_login_at: string | null;
   created_at: string;
+  /** Public URL of the uploaded profile photo (stored in the auth user's metadata). */
+  avatar_url?: string | null;
 };
 
 export type Balance = {

@@ -31,8 +31,14 @@ export const hasPassedMfa = cache(async (): Promise<boolean> => {
 });
 
 export const getProfile = cache(async (userId: string): Promise<Profile | null> => {
-  const { data } = await createAdminClient().from("profiles").select("*").eq("id", userId).maybeSingle();
-  return (data as Profile | null) ?? null;
+  const db = createAdminClient();
+  const [{ data }, auth] = await Promise.all([
+    db.from("profiles").select("*").eq("id", userId).maybeSingle(),
+    db.auth.admin.getUserById(userId),
+  ]);
+  if (!data) return null;
+  const avatar = auth.data.user?.user_metadata?.avatar_url;
+  return { ...(data as Profile), avatar_url: typeof avatar === "string" && avatar ? avatar : null };
 });
 
 /** Use in pages/layouts/actions that require a fully signed-in (password + OTP) user. */

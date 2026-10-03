@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+.next
+node_modules
+*.log
+.claude
+.vercel-login.log
+index.html
+vite.config.js
+eslint.config.js

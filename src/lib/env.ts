@@ -1,6 +1,30 @@
 // Central place for environment access so a missing key fails loudly and clearly.
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://lunobase.com").replace(/\/$/, "");
+/**
+ * Public site address. Tolerates a missing/blank value, a missing "https://" and a trailing slash,
+ * and falls back to Vercel's own URL, so a misconfigured env var can never break the build.
+ */
+function resolveSiteUrl() {
+  const candidates = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    process.env.VERCEL_URL,
+    "https://lunobase.com",
+  ];
+  for (const raw of candidates) {
+    const v = raw?.trim().replace(/^["']|["']$/g, "");
+    if (!v) continue;
+    const withProto = /^https?:\/\//i.test(v) ? v : `https://${v}`;
+    try {
+      return new URL(withProto).origin;
+    } catch {
+      /* try the next candidate */
+    }
+  }
+  return "https://lunobase.com";
+}
+
+export const SITE_URL = resolveSiteUrl();
 export const SITE_NAME = "Lunobase";
 
 export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
