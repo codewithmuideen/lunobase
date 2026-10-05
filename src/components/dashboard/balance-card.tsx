@@ -73,7 +73,7 @@ export function BalanceCard({
               <dd className="num mt-1 font-semibold text-white">{mask(formatUsd(available))}</dd>
             </div>
             <div>
-              <dt className="text-xs text-muted">Cash (USD)</dt>
+              <dt className="text-xs text-muted">USDT balance</dt>
               <dd className="num mt-1 font-semibold text-white">{mask(formatUsd(cash))}</dd>
             </div>
             <div>

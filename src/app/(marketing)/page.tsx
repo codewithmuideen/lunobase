@@ -40,7 +40,7 @@ const faqs = [
   },
   {
     q: "How do I fund my account?",
-    a: "Open Wallet → Deposit, choose bank transfer or a crypto network, send your funds and submit the reference. Your balance updates automatically, in real time, the moment the deposit is confirmed.",
+    a: "Open Wallet → Deposit and choose Bitcoin, Ethereum or USDT. Copy your deposit address (or scan the QR code), send your funds and submit the transaction hash. Your balance updates automatically, in real time, the moment the deposit is confirmed.",
   },
   {
     q: "When can I withdraw?",
@@ -48,7 +48,7 @@ const faqs = [
   },
   {
     q: "What does it cost to trade?",
-    a: "There are no deposit fees and no account fees. You pay a simple, flat trading fee shown before you confirm every order. See the Fees page for details.",
+    a: "There are no deposit fees and no account fees. All coins are bought and sold with USDT, and you pay a simple, flat trading fee shown before you confirm every order. See the Fees page for details.",
   },
   {
     q: "Which assets can I trade?",
@@ -58,7 +58,7 @@ const faqs = [
 
 const steps = [
   { n: "01", title: "Create your account", text: "Sign up in under two minutes, verify your email and secure your login with a one-time code." },
-  { n: "02", title: "Fund your wallet", text: "Deposit by bank transfer or send crypto. Your balance updates live the moment it's confirmed." },
+  { n: "02", title: "Fund your wallet", text: "Send Bitcoin, Ethereum or USDT to your deposit address. Your balance updates live the moment it's confirmed." },
   { n: "03", title: "Buy your first crypto", text: "Pick an asset, enter an amount and review the exact price, fee and total before you confirm." },
 ];
 
@@ -140,7 +140,7 @@ export default async function HomePage() {
               className="md:col-span-2"
               icon={Wallet}
               title="One wallet, every asset"
-              text={`Hold USD and ${TRADABLE_ASSETS.length} leading cryptocurrencies side by side, with clear profit and loss for each.`}
+              text={`Hold USDT and ${TRADABLE_ASSETS.length - 1} other leading cryptocurrencies side by side, with clear profit and loss for each.`}
             >
               <WalletPreview />
             </FeatureCard>

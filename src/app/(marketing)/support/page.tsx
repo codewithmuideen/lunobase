@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Building2, Clock, CreditCard, Headset, LifeBuoy, Mail, MessageSquare } from "lucide-react";
+import { Building2, Clock, CreditCard, LifeBuoy, Mail, MessageSquare } from "lucide-react";
 import { Container, Faq, PageHero } from "@/components/marketing/section";
 import { ButtonLink } from "@/components/ui/button";
 
@@ -16,7 +16,7 @@ const faq = [
   },
   {
     q: "My deposit hasn't appeared yet",
-    a: "Crypto deposits need network confirmations and bank transfers can take 1-3 business days. Once confirmed, your balance updates automatically. If it's been longer, open a ticket with your transaction reference.",
+    a: "Crypto deposits need network confirmations, which usually take a few minutes to an hour. Once confirmed, your balance updates automatically. If it's been longer, open a ticket with your transaction reference.",
   },
   {
     q: "Why can't I withdraw yet?",
@@ -41,7 +41,7 @@ export default function SupportPage() {
           <div className="grid gap-4 md:grid-cols-3">
             {[
               { icon: MessageSquare, title: "Support tickets", text: "The fastest way to reach us. Sign in and open a ticket from your dashboard.", cta: { href: "/dashboard/support", label: "Open a ticket" } },
-              { icon: Mail, title: "Email", text: "Prefer email? Write to contact@lunobase.com from your registered address.", cta: { href: "mailto:contact@lunobase.com", label: "Email support" } },
+              { icon: Mail, title: "Email", text: "Prefer email? Write to info@lunobase.com from your registered address.", cta: { href: "mailto:info@lunobase.com", label: "Email support" } },
               { icon: LifeBuoy, title: "Security emergency", text: "Think your account is compromised? Freeze it instantly from Security settings.", cta: { href: "/dashboard/security", label: "Go to Security" } },
             ].map(({ icon: Icon, title, text, cta }) => (
               <div key={title} className="card flex flex-col p-7">
@@ -61,11 +61,10 @@ export default function SupportPage() {
           <div className="mt-14">
             <h2 className="font-display text-2xl font-bold text-white">Contact directory</h2>
             <p className="mt-2 text-slate">Write to the right team and you&apos;ll get an answer faster. Always email us from your registered address.</p>
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
               {[
-                { icon: Headset, title: "Customer support", email: "contact@lunobase.com", text: "Account access, login codes, trading questions and withdrawal access requests." },
-                { icon: CreditCard, title: "Payments", email: "payment@lunobase.com", text: "Deposits, bank transfers, payment references and withdrawal payouts." },
-                { icon: Building2, title: "General enquiries", email: "info@lunobase.com", text: "Partnerships, press, privacy requests and everything else." },
+                { icon: CreditCard, title: "Payments", email: "payment@lunobase.com", text: "Deposits, transaction hashes and withdrawal payouts." },
+                { icon: Building2, title: "Support & general enquiries", email: "info@lunobase.com", text: "Account access, login codes, trading questions, withdrawal requests and everything else." },
               ].map(({ icon: Icon, title, email, text }) => (
                 <a
                   key={email}

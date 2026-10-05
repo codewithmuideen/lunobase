@@ -101,7 +101,7 @@ export default async function WalletPage() {
                   <td className="px-5 py-4 sm:px-6">
                     <div className="flex justify-end gap-1.5">
                       <IconLink href={`/dashboard/deposit?asset=${h.asset}`} label="Deposit" icon={ArrowDownToLine} />
-                      {h.asset !== "USD" && <IconLink href={`/dashboard/trade?asset=${h.asset}`} label="Trade" icon={Repeat} />}
+                      {h.asset !== "USD" && h.asset !== "USDT" && <IconLink href={`/dashboard/trade?asset=${h.asset}`} label="Trade" icon={Repeat} />}
                       <IconLink href={`/dashboard/withdraw?asset=${h.asset}`} label="Withdraw" icon={locked ? Lock : ArrowUpFromLine} />
                     </div>
                   </td>

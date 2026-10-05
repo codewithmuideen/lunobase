@@ -50,7 +50,7 @@ ${antiPhishingBlock}
 <td valign="middle" style="padding-left:14px;font:400 13px/1.5 Inter,Arial,sans-serif;color:#6B7185">
 <span style="font:600 14px/1.4 Inter,Arial,sans-serif;color:#0B0F19">The Lunobase Team</span><br>
 Secure digital asset platform<br>
-<a href="mailto:contact@lunobase.com" style="color:#0052FF;text-decoration:none">contact@lunobase.com</a>
+<a href="mailto:info@lunobase.com" style="color:#0052FF;text-decoration:none">info@lunobase.com</a>
 </td>
 </tr></table>
 </td></tr>
@@ -63,7 +63,7 @@ Secure digital asset platform<br>
 </td></tr>
 <tr><td style="padding:4px 16px 24px;text-align:center;font:400 11px/1.7 Inter,Arial,sans-serif;color:#A3A8B5">
 Lunobase staff will never ask for your password, login codes or recovery phrase.<br>
-Payments: <a href="mailto:payment@lunobase.com" style="color:#8A90A0;text-decoration:underline">payment@lunobase.com</a> &nbsp;·&nbsp; General: <a href="mailto:info@lunobase.com" style="color:#8A90A0;text-decoration:underline">info@lunobase.com</a><br>
+Payments: <a href="mailto:payment@lunobase.com" style="color:#8A90A0;text-decoration:underline">payment@lunobase.com</a><br>
 You received this email because you have a Lunobase account.<br>
 &copy; ${YEAR} Lunobase. All rights reserved.
 </td></tr></table>

@@ -123,7 +123,7 @@ export async function loginAction(_: FormState, fd: FormData): Promise<FormState
   const profile = await getProfile(data.user.id);
   if (!profile || profile.status === "suspended") {
     await supabase.auth.signOut();
-    return { error: "This account is suspended. Please email contact@lunobase.com.", fields };
+    return { error: "This account is suspended. Please email info@lunobase.com.", fields };
   }
 
   try {

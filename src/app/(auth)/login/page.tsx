@@ -11,7 +11,7 @@ const notices: Record<string, { tone: "success" | "info" | "error"; text: string
   verified: { tone: "success", text: "Email verified! Sign in to continue." },
   reset: { tone: "success", text: "Password updated. Sign in with your new password." },
   frozen: { tone: "info", text: "Your account has been frozen and all sessions were signed out. Contact support to restore access." },
-  suspended: { tone: "error", text: "This account is suspended. Please email contact@lunobase.com." },
+  suspended: { tone: "error", text: "This account is suspended. Please email info@lunobase.com." },
   link: { tone: "error", text: "That link is invalid or has expired. Please request a new one." },
 };
 

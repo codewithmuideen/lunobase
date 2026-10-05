@@ -94,7 +94,7 @@ export default async function OverviewPage() {
               Wallet →
             </Link>
           </div>
-          {crypto.length === 0 && portfolio.cash === 0 ? (
+          {portfolio.totalValue === 0 ? (
             <EmptyState
               icon={History}
               title="Your portfolio is empty"
@@ -117,7 +117,7 @@ export default async function OverviewPage() {
                   {portfolio.holdings.map((h) => (
                     <tr key={h.asset} className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02]">
                       <td className="px-5 py-3.5 sm:px-6">
-                        <Link href={h.asset === "USD" ? "/dashboard/wallet" : `/dashboard/trade?asset=${h.asset}`} className="flex items-center gap-3">
+                        <Link href={h.asset === "USD" || h.asset === "USDT" ? "/dashboard/wallet" : `/dashboard/trade?asset=${h.asset}`} className="flex items-center gap-3">
                           <CoinIcon src={h.image} symbol={h.asset} />
                           <span>
                             <span className="block text-sm font-semibold text-white">{h.name}</span>

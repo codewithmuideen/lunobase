@@ -31,7 +31,7 @@ const docs: Record<string, Doc> = {
       { id: "suspension", h: "Suspension & termination", p: ["We may freeze or suspend accounts to comply with law, investigate suspicious activity, or protect customers and the platform. You may close your account at any time after withdrawing your funds."] },
       { id: "liability", h: "Limitation of liability", p: ["To the maximum extent permitted by law, Lunobase is not liable for losses arising from market movements, your own actions, or events beyond our reasonable control."] },
       { id: "changes", h: "Changes to these Terms", p: ["We may update these Terms. Material changes will be notified by email or in-app at least 14 days before they take effect."] },
-      { id: "contact", h: "Contact", p: ["Questions about these Terms: contact@lunobase.com."] },
+      { id: "contact", h: "Contact", p: ["Questions about these Terms: info@lunobase.com."] },
     ],
   },
   privacy: {
@@ -263,8 +263,8 @@ export default async function LegalPage({ params }: { params: Promise<{ slug: st
                 <Mail className="size-5 text-brand-400" />
                 <p className="text-sm text-silver">Questions about this document? Email us, we&apos;re happy to help.</p>
               </div>
-              <a href="mailto:contact@lunobase.com" className="text-sm font-semibold text-brand-300 hover:text-brand-200">
-                contact@lunobase.com →
+              <a href="mailto:info@lunobase.com" className="text-sm font-semibold text-brand-300 hover:text-brand-200">
+                info@lunobase.com →
               </a>
             </div>
           </div>

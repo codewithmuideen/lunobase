@@ -22,7 +22,7 @@ export default async function DepositPage({ searchParams }: { searchParams: Prom
 
   return (
     <>
-      <PageHeader title="Deposit" description="Fund your wallet with crypto or a bank transfer." />
+      <PageHeader title="Deposit" description="Fund your wallet with Bitcoin, Ethereum or USDT." />
       <div className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
         <DepositForm
           addresses={settings.deposit_addresses ?? {}}
@@ -36,8 +36,8 @@ export default async function DepositPage({ searchParams }: { searchParams: Prom
             <h2 className="font-semibold text-white">How deposits work</h2>
             <ol className="mt-4 space-y-4">
               {[
-                ["Send funds", "Transfer crypto to your address, or send a bank transfer with your reference."],
-                ["Notify us", "Submit the amount and transaction reference below the instructions."],
+                ["Send funds", "Copy the deposit address or scan the QR code, then send from your own wallet."],
+                ["Notify us", "Submit the amount and the transaction hash (TXID) below the address."],
                 ["Get credited", "Once confirmed, your wallet updates instantly. You'll also get an email."],
               ].map(([t, d], i) => (
                 <li key={t} className="flex gap-3">

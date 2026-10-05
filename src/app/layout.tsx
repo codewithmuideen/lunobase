@@ -75,9 +75,8 @@ const jsonLd = {
       logo: `${SITE_URL}/brand/app-icon-512.png`,
       email: "info@lunobase.com",
       contactPoint: [
-        { "@type": "ContactPoint", contactType: "customer support", email: "contact@lunobase.com", availableLanguage: ["English"] },
+        { "@type": "ContactPoint", contactType: "customer support", email: "info@lunobase.com", availableLanguage: ["English"] },
         { "@type": "ContactPoint", contactType: "billing support", email: "payment@lunobase.com", availableLanguage: ["English"] },
-        { "@type": "ContactPoint", contactType: "general enquiries", email: "info@lunobase.com", availableLanguage: ["English"] },
       ],
       sameAs: ["https://x.com/lunobase"],
     },

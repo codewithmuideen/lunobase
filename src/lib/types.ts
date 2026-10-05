@@ -66,6 +66,8 @@ export type Trade = {
   price: string | number;
   gross_usd: string | number;
   fee_usd: string | number;
+  /** Asset the trade was settled in (USDT; older trades USD). */
+  quote?: string;
   created_at: string;
 };
 

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { currentAdmin, getProfile } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { DEPOSITABLE } from "@/lib/assets";
@@ -38,7 +39,7 @@ export async function approveDepositAction(input: { id: string; amount?: number;
   const dep = data as Deposit;
   const user = await getProfile(dep.user_id);
   if (user) {
-    await sendEmail(
+    after(() => sendEmail(
       user.email,
       templates.depositApproved({
         name: user.full_name,
@@ -46,7 +47,7 @@ export async function approveDepositAction(input: { id: string; amount?: number;
         asset: dep.asset,
         antiPhishing: user.anti_phishing_code,
       }),
-    );
+    ));
   }
   refresh();
   return { ok: true, message: `Credited ${formatAmount(dep.credited ?? dep.amount)} ${dep.asset}.` };
@@ -68,7 +69,7 @@ export async function rejectDepositAction(input: { id: string; note: string }): 
   const dep = data as Deposit;
   const user = await getProfile(dep.user_id);
   if (user) {
-    await sendEmail(
+    after(() => sendEmail(
       user.email,
       templates.depositRejected({
         name: user.full_name,
@@ -77,7 +78,7 @@ export async function rejectDepositAction(input: { id: string; note: string }): 
         note,
         antiPhishing: user.anti_phishing_code,
       }),
-    );
+    ));
   }
   refresh();
   return { ok: true, message: "Deposit rejected." };
@@ -106,7 +107,7 @@ export async function reviewWithdrawalAction(input: {
   const wd = data as Withdrawal;
   const user = await getProfile(wd.user_id);
   if (user) {
-    await sendEmail(
+    after(() => sendEmail(
       user.email,
       templates.withdrawalUpdate({
         name: user.full_name,
@@ -117,7 +118,7 @@ export async function reviewWithdrawalAction(input: {
         note: wd.admin_note,
         antiPhishing: user.anti_phishing_code,
       }),
-    );
+    ));
   }
   refresh();
   return { ok: true, message: input.approve ? "Withdrawal marked as completed." : "Withdrawal rejected and funds returned." };

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { AlertTriangle, ChevronDown, Info, Search, ShieldCheck, Timer } from "lucide-react";
 import type { MarketCoin } from "@/lib/market";
 import type { Trade } from "@/lib/types";
-import { TRADABLE_ASSETS } from "@/lib/assets";
+import { QUOTE, TRADABLE_ASSETS } from "@/lib/assets";
 import { useMarkets } from "@/hooks/use-markets";
 import { placeOrderAction } from "@/actions/trade";
 import { cn, formatAmount, formatDate, formatPrice, formatUsd } from "@/lib/utils";
@@ -50,7 +50,7 @@ export function TradeTerminal({
   const [left, setLeft] = useState(QUOTE_TTL);
   const [pending, start] = useTransition();
 
-  const usd = balances.USD ?? 0;
+  const usd = balances[QUOTE] ?? 0; // spendable USDT
   const held = balances[asset] ?? 0;
   const fee = feeBps / 10000;
   const amount = Number(input) || 0;
@@ -70,11 +70,11 @@ export function TradeTerminal({
     !amount
       ? null
       : side === "buy" && amount > usd
-        ? "Insufficient USD balance"
+        ? "Insufficient USDT balance"
         : side === "sell" && amount > held
           ? `Insufficient ${asset} balance`
           : calc && calc.gross < minTrade
-            ? `Minimum order is ${formatUsd(minTrade)}`
+            ? `Minimum order is ${minTrade} USDT`
             : null;
 
   const disabledReason = !tradingEnabled ? "Trading is paused for maintenance" : !accountActive ? "Your account is frozen" : null;
@@ -118,7 +118,7 @@ export function TradeTerminal({
         <PairSelector current={asset} bySymbol={bySymbol} />
         <div>
           <p className="num font-display text-2xl font-bold text-white">{price ? formatPrice(price) : "-"}</p>
-          <p className="text-xs text-muted">Live · USD</p>
+          <p className="text-xs text-muted">Live · USDT</p>
         </div>
         <Stat label="24h change">
           <Change value={coin?.price_change_percentage_24h} />
@@ -170,7 +170,7 @@ export function TradeTerminal({
               <span>
                 Available:{" "}
                 <button onClick={() => setPct(1)} className="num font-medium text-silver hover:text-white">
-                  {side === "buy" ? formatUsd(usd) : `${formatAmount(held)} ${asset}`}
+                  {side === "buy" ? `${formatAmount(usd, 2)} USDT` : `${formatAmount(held)} ${asset}`}
                 </button>
               </span>
             </span>
@@ -185,7 +185,7 @@ export function TradeTerminal({
                   error ? "border-down/50" : "border-white/10 focus:border-brand-500",
                 )}
               />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate">{side === "buy" ? "USD" : asset}</span>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate">{side === "buy" ? "USDT" : asset}</span>
             </div>
           </label>
 
@@ -220,10 +220,10 @@ export function TradeTerminal({
             <p className="mt-4 rounded-xl bg-warn/10 px-4 py-3 text-sm text-warn">{disabledReason}</p>
           ) : side === "buy" && usd <= 0 ? (
             <Link
-              href="/dashboard/deposit"
+              href="/dashboard/deposit?asset=USDT"
               className="mt-4 flex h-12 items-center justify-center rounded-xl bg-brand-600 text-sm font-semibold text-white hover:bg-[#1a63ff]"
             >
-              Deposit USD to buy
+              Deposit USDT to buy
             </Link>
           ) : (
             <Button
@@ -363,7 +363,7 @@ function PairSelector({ current, bySymbol }: { current: string; bySymbol: Record
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
   const coin = bySymbol[current];
-  const list = TRADABLE_ASSETS.filter(
+  const list = TRADABLE_ASSETS.filter((a) => a.symbol !== QUOTE).filter(
     (a) => !q || a.symbol.toLowerCase().includes(q.toLowerCase()) || a.name.toLowerCase().includes(q.toLowerCase()),
   );
   return (
@@ -372,7 +372,7 @@ function PairSelector({ current, bySymbol }: { current: string; bySymbol: Record
         <CoinIcon src={coin?.image} symbol={current} className="size-9" />
         <span className="text-left">
           <span className="flex items-center gap-1 font-display text-lg font-bold text-white">
-            {current}/USD <ChevronDown className="size-4 text-slate" />
+            {current}/USDT <ChevronDown className="size-4 text-slate" />
           </span>
           <span className="block text-xs text-muted">{coin?.name}</span>
         </span>

@@ -41,7 +41,9 @@ export default async function AdminTrades() {
                     </Link>
                   </td>
                   <td className={cn("px-4 py-3 font-semibold capitalize", t.side === "buy" ? "text-up" : "text-down")}>{t.side}</td>
-                  <td className="px-4 py-3 text-white">{t.asset}/USD</td>
+                  <td className="px-4 py-3 text-white">
+                    {t.asset}/{t.quote ?? "USD"}
+                  </td>
                   <td className="num px-4 py-3 text-right text-white">{formatAmount(t.quantity)}</td>
                   <td className="num px-4 py-3 text-right text-slate">{formatPrice(Number(t.price))}</td>
                   <td className="num px-4 py-3 text-right text-white">{formatUsd(t.gross_usd)}</td>

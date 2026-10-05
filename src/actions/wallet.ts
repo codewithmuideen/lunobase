@@ -1,9 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { currentUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { DEPOSITABLE, ASSET_BY_SYMBOL } from "@/lib/assets";
+import { DEPOSITABLE, ASSET_BY_SYMBOL, FUNDING_ASSETS } from "@/lib/assets";
 import { SITE_URL } from "@/lib/env";
 import { verifyPassword } from "@/lib/security/verify-password";
 import { rateLimit } from "@/lib/security/rate-limit";
@@ -31,7 +32,9 @@ export async function submitDepositAction(input: {
   const amount = Number(input.amount);
   const reference = String(input.reference ?? "").trim().slice(0, 200);
 
-  if (!DEPOSITABLE.includes(asset)) return { ok: false, error: "This asset isn't supported." };
+  if (method === "crypto" ? !FUNDING_ASSETS.includes(asset) : asset !== "USD") {
+    return { ok: false, error: "Deposits are accepted in BTC, ETH and USDT." };
+  }
   if (!Number.isFinite(amount) || amount <= 0) return { ok: false, error: "Enter a valid amount." };
   if (reference.length < 4) {
     return { ok: false, error: method === "bank" ? "Enter your bank transfer reference." : "Enter the transaction hash (TXID)." };
@@ -59,7 +62,8 @@ export async function submitDepositAction(input: {
   } as never);
   if (error) return { ok: false, error: friendlyError(error.message) };
 
-  await Promise.all([
+  after(() =>
+    Promise.all([
     sendEmail(
       profile.email,
       templates.depositSubmitted({
@@ -82,7 +86,8 @@ export async function submitDepositAction(input: {
         url: `${SITE_URL}/admin/deposits`,
       }),
     ),
-  ]);
+  ]),
+  );
 
   revalidatePath("/dashboard", "layout");
   return { ok: true, message: "Deposit submitted. Your wallet updates automatically once it's confirmed." };
@@ -128,7 +133,8 @@ export async function requestWithdrawalAction(input: {
   if (error) return { ok: false, error: friendlyError(error.message) };
 
   const { ip, userAgent } = await requestMeta();
-  await Promise.all([
+  after(() =>
+    Promise.all([
     logSecurityEvent(profile.id, "withdrawal_requested", { ip, userAgent, asset, amount }),
     sendEmail(
       profile.email,
@@ -153,7 +159,8 @@ export async function requestWithdrawalAction(input: {
         url: `${SITE_URL}/admin/withdrawals`,
       }),
     ),
-  ]);
+  ]),
+  );
 
   revalidatePath("/dashboard", "layout");
   return { ok: true, message: "Withdrawal submitted for security review. Funds are on hold until it's processed." };

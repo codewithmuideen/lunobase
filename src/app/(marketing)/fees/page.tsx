@@ -32,11 +32,9 @@ export default async function FeesPage() {
   const rows: [string, string][] = [
     ["Account opening", "Free"],
     ["Account maintenance", "Free"],
-    ["Bank deposit", "Free"],
-    ["Crypto deposit", "Free"],
+    ["Deposit (BTC, ETH, USDT)", "Free"],
     ["Buy / sell (market order)", `${pct}%`],
-    ["Minimum order", `$${fees.min_trade_usd}`],
-    ["Minimum bank deposit", `$${fees.min_deposit_usd}`],
+    ["Minimum order", `${fees.min_trade_usd} USDT`],
     ["Withdrawal", "Network fee only"],
   ];
 
@@ -96,7 +94,7 @@ export default async function FeesPage() {
             items={[
               {
                 q: "How is the trading fee calculated?",
-                a: `When you buy, the fee is included in the amount you spend: spend $100 and ${pct}% goes to fees, the rest buys crypto. When you sell, the fee is deducted from the USD you receive.`,
+                a: `When you buy, the fee is included in the amount you spend: spend 100 USDT and ${pct}% goes to fees, the rest buys crypto. When you sell, the fee is deducted from the USDT you receive.`,
               },
               {
                 q: "Why might the executed price differ slightly from the quote?",
@@ -104,7 +102,7 @@ export default async function FeesPage() {
               },
               {
                 q: "Are there withdrawal fees?",
-                a: "We only pass on the blockchain network fee required to send your crypto. Bank withdrawals may incur your bank's own charges. For any payment question, email payment@lunobase.com.",
+                a: "We only pass on the blockchain network fee required to send your crypto. For any payment question, email payment@lunobase.com.",
               },
             ]}
           />

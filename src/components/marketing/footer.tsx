@@ -19,7 +19,7 @@ const columns = [
       { href: "/about", label: "About Lunobase" },
       { href: "/security", label: "Security" },
       { href: "/support", label: "Help center" },
-      { href: "mailto:contact@lunobase.com", label: "Contact" },
+      { href: "mailto:info@lunobase.com", label: "Contact" },
     ],
   },
   {
@@ -45,7 +45,6 @@ export function Footer() {
             </p>
             <ul className="mt-6 space-y-2 text-sm">
               {[
-                ["Support", "contact@lunobase.com"],
                 ["Payments", "payment@lunobase.com"],
                 ["General", "info@lunobase.com"],
               ].map(([label, email]) => (
@@ -100,8 +99,8 @@ export function Footer() {
               <Link href="/legal/terms" className="transition-colors hover:text-white">
                 Terms
               </Link>
-              <a href="mailto:contact@lunobase.com" className="transition-colors hover:text-white">
-                contact@lunobase.com
+              <a href="mailto:info@lunobase.com" className="transition-colors hover:text-white">
+                info@lunobase.com
               </a>
             </div>
           </div>

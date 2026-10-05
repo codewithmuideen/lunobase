@@ -2,7 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { getBalances, getSettings } from "@/lib/data";
 import { getMarkets } from "@/lib/market";
 import { createClient } from "@/lib/supabase/server";
-import { ASSET_BY_ID, ASSET_BY_SYMBOL } from "@/lib/assets";
+import { ASSET_BY_ID, ASSET_BY_SYMBOL, QUOTE } from "@/lib/assets";
 import type { Trade } from "@/lib/types";
 import { TradeTerminal } from "@/components/trade/trade-terminal";
 
@@ -11,7 +11,8 @@ export const metadata = { title: "Trade" };
 export default async function TradePage({ searchParams }: { searchParams: Promise<{ asset?: string }> }) {
   const { profile } = await requireUser();
   const { asset: raw } = await searchParams;
-  const asset = raw && ASSET_BY_SYMBOL[raw.toUpperCase()] ? raw.toUpperCase() : "BTC";
+  const wanted = raw?.toUpperCase();
+  const asset = wanted && ASSET_BY_SYMBOL[wanted] && wanted !== QUOTE ? wanted : "BTC";
 
   const supabase = await createClient();
   const [balances, settings, markets, tradesRes] = await Promise.all([

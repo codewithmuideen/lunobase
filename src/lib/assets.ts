@@ -31,6 +31,13 @@ export const TRADABLE_ASSETS: AssetInfo[] = [
 
 export const CASH = { symbol: "USD", name: "US Dollar" } as const;
 
+/** Everything is bought and sold against this asset. */
+export const QUOTE = "USDT";
+/** Assets users can fund their account with (each has its own deposit address). */
+export const FUNDING_ASSETS = ["BTC", "ETH", "USDT"];
+/** Assets that can be traded against the quote asset. */
+export const TRADE_ASSETS = () => TRADABLE_ASSETS.filter((a) => a.symbol !== QUOTE);
+
 export const ASSET_BY_SYMBOL = Object.fromEntries(TRADABLE_ASSETS.map((a) => [a.symbol, a])) as Record<string, AssetInfo>;
 export const ASSET_BY_ID = Object.fromEntries(TRADABLE_ASSETS.map((a) => [a.id, a])) as Record<string, AssetInfo>;
 

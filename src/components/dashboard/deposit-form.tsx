@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import { AlertTriangle, Building2, Check, Copy, Coins } from "lucide-react";
-import { TRADABLE_ASSETS, ASSET_BY_SYMBOL } from "@/lib/assets";
+import { TRADABLE_ASSETS, ASSET_BY_SYMBOL, FUNDING_ASSETS } from "@/lib/assets";
 import { submitDepositAction } from "@/actions/wallet";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/field";
@@ -24,10 +24,18 @@ export function DepositForm({
   userRef: string;
   defaultAsset?: string;
 }) {
-  const initialAsset = defaultAsset && ASSET_BY_SYMBOL[defaultAsset] ? defaultAsset : "USDT";
-  const [method, setMethod] = useState<"crypto" | "bank">(defaultAsset === "USD" ? "bank" : "crypto");
+  // Only BTC, ETH and USDT can be deposited; each shows the networks that have an address configured.
+  const fundable = TRADABLE_ASSETS.filter((a) => FUNDING_ASSETS.includes(a.symbol));
+  const networksFor = (sym: string) => {
+    const all = ASSET_BY_SYMBOL[sym].networks;
+    const live = all.filter((n) => addresses[sym]?.[n]);
+    return live.length ? live : all;
+  };
+  const bankAvailable = Object.values(bank).some(Boolean);
+  const initialAsset = defaultAsset && FUNDING_ASSETS.includes(defaultAsset) ? defaultAsset : "USDT";
+  const [method, setMethod] = useState<"crypto" | "bank">("crypto");
   const [asset, setAsset] = useState(initialAsset);
-  const [network, setNetwork] = useState(ASSET_BY_SYMBOL[initialAsset].networks[0]);
+  const [network, setNetwork] = useState(networksFor(initialAsset)[0]);
   const [amount, setAmount] = useState("");
   const [reference, setReference] = useState("");
   const [pending, start] = useTransition();
@@ -47,7 +55,7 @@ export function DepositForm({
 
   return (
     <div className="card-raised p-5 sm:p-7">
-      <div className="grid grid-cols-2 gap-2 rounded-2xl bg-ink-950/60 p-1.5">
+      <div className={cn("grid grid-cols-2 gap-2 rounded-2xl bg-ink-950/60 p-1.5", !bankAvailable && "hidden")}>
         {(
           [
             ["crypto", "Crypto", Coins],
@@ -75,10 +83,10 @@ export function DepositForm({
                 value={asset}
                 onChange={(e) => {
                   setAsset(e.target.value);
-                  setNetwork(ASSET_BY_SYMBOL[e.target.value].networks[0]);
+                  setNetwork(networksFor(e.target.value)[0]);
                 }}
               >
-                {TRADABLE_ASSETS.map((a) => (
+                {fundable.map((a) => (
                   <option key={a.symbol} value={a.symbol}>
                     {a.symbol} · {a.name}
                   </option>
@@ -87,7 +95,7 @@ export function DepositForm({
             </Field>
             <Field label="Network">
               <Select value={network} onChange={(e) => setNetwork(e.target.value)}>
-                {ASSET_BY_SYMBOL[asset].networks.map((n) => (
+                {networksFor(asset).map((n) => (
                   <option key={n} value={n}>
                     {n}
                   </option>

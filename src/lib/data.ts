@@ -3,7 +3,7 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getMarkets, type MarketCoin } from "@/lib/market";
-import { ASSET_BY_SYMBOL, TRADABLE_ASSETS } from "@/lib/assets";
+import { ASSET_BY_SYMBOL, QUOTE, TRADABLE_ASSETS } from "@/lib/assets";
 import type { AppSettings, Balance } from "@/lib/types";
 
 export type Holding = {
@@ -91,7 +91,7 @@ export const getPortfolio = cache(async (userId: string): Promise<Portfolio> => 
         allocation: 0,
       } satisfies Holding;
     })
-    .filter((h) => h.amount > 0 || h.locked > 0 || h.asset === "USD");
+    .filter((h) => h.amount > 0 || h.locked > 0 || h.asset === QUOTE);
 
   const totalValue = raw.reduce((s, h) => s + h.value + h.lockedValue, 0);
   const holdings = raw
@@ -99,7 +99,8 @@ export const getPortfolio = cache(async (userId: string): Promise<Portfolio> => 
     .sort((a, b) => b.value + b.lockedValue - (a.value + a.lockedValue));
 
   const cashH = holdings.find((h) => h.asset === "USD");
-  const cash = cashH?.value ?? 0;
+  // Spendable trading balance is held in USDT.
+  const cash = holdings.find((h) => h.asset === QUOTE)?.value ?? 0;
   const lockedValue = holdings.reduce((s, h) => s + h.lockedValue, 0);
 
   // 7-day value of the CURRENT holdings, reconstructed from each asset's hourly sparkline.

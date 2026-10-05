@@ -92,7 +92,9 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
                   (rows as Trade[]).map((t) => (
                     <tr key={t.id} className="border-b border-white/[0.04] last:border-0">
                       <Td muted>{formatDate(t.created_at)}</Td>
-                      <Td>{t.asset}/USD</Td>
+                      <Td>
+                        {t.asset}/{t.quote ?? "USD"}
+                      </Td>
                       <Td className={cn("font-semibold capitalize", t.side === "buy" ? "text-up" : "text-down")}>{t.side}</Td>
                       <Td right>{formatPrice(Number(t.price))}</Td>
                       <Td right>{formatAmount(t.quantity)}</Td>

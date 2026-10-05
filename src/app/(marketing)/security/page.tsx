@@ -116,10 +116,10 @@ export default function SecurityPage() {
               align="left"
               eyebrow="Found a vulnerability?"
               title="Help us keep Lunobase safe"
-              description="We welcome responsible disclosure. Email contact@lunobase.com with details and we'll respond within 48 hours."
+              description="We welcome responsible disclosure. Email info@lunobase.com with details and we'll respond within 48 hours."
             />
             <div className="flex lg:justify-end">
-              <ButtonLink href="mailto:contact@lunobase.com" size="lg">
+              <ButtonLink href="mailto:info@lunobase.com" size="lg">
                 Report an issue
               </ButtonLink>
             </div>
