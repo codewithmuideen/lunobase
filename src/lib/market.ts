@@ -173,3 +173,27 @@ export async function getCoinDetail(id: string): Promise<CoinDetail | null> {
     return null;
   }
 }
+
+export type FearGreed = { value: number; label: string; history: { t: number; v: number }[]; yesterday: number | null; lastWeek: number | null; lastMonth: number | null };
+
+/** Crypto Fear & Greed Index (alternative.me), refreshed hourly. Returns null if unavailable. */
+export async function getFearGreed(): Promise<FearGreed | null> {
+  try {
+    const res = await fetch("https://api.alternative.me/fng/?limit=31", { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    const json = (await res.json()) as { data?: { value: string; value_classification: string; timestamp: string }[] };
+    const rows = json.data ?? [];
+    if (!rows.length) return null;
+    const num = (i: number) => (rows[i] ? Number(rows[i].value) : null);
+    return {
+      value: Number(rows[0].value),
+      label: rows[0].value_classification,
+      yesterday: num(1),
+      lastWeek: num(7),
+      lastMonth: num(30),
+      history: [...rows].reverse().map((r) => ({ t: Number(r.timestamp) * 1000, v: Number(r.value) })),
+    };
+  } catch {
+    return null;
+  }
+}

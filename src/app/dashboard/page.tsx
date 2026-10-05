@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Circle, Clock, History, Lock, Unlock } from "lucide-react";
+import { ArrowRight, CheckCircle2, Circle, Clock, Flame, History, Lock, Star, Unlock } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { getPortfolio } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
-import { ASSET_BY_ID } from "@/lib/assets";
+import { ASSET_BY_ID, QUOTE } from "@/lib/assets";
+import { getFearGreed } from "@/lib/market";
+import { FearGreedCard } from "@/components/dashboard/fear-greed";
 import type { Deposit, LedgerEntry } from "@/lib/types";
 import { cn, formatAmount, formatDate, formatPrice, formatUsd } from "@/lib/utils";
 import { BalanceCard } from "@/components/dashboard/balance-card";
@@ -21,8 +23,10 @@ export const metadata = { title: "Overview" };
 export default async function OverviewPage() {
   const { profile } = await requireUser();
   const supabase = await createClient();
-  const [portfolio, ledgerRes, pendingRes] = await Promise.all([
+  const [portfolio, fearGreed, watchRes, ledgerRes, pendingRes] = await Promise.all([
     getPortfolio(profile.id),
+    getFearGreed(),
+    supabase.from("watchlist").select("coin_id").eq("user_id", profile.id),
     supabase.from("ledger").select("*").eq("user_id", profile.id).order("created_at", { ascending: false }).limit(7),
     supabase.from("deposits").select("*").eq("user_id", profile.id).eq("status", "pending").order("created_at", { ascending: false }),
   ]);
@@ -39,6 +43,30 @@ export default async function OverviewPage() {
     .slice(0, 5);
 
   const crypto = portfolio.holdings.filter((h) => h.asset !== "USD");
+  const allTimePnl = portfolio.holdings.reduce((sum, h) => sum + h.pnl, 0);
+  const costBasis = portfolio.holdings.reduce((sum, h) => sum + (h.avgCost ? h.avgCost * h.amount : 0), 0);
+  const trending = portfolio.markets
+    .filter((m) => ASSET_BY_ID[m.id] && m.symbol !== QUOTE)
+    .sort((a, b) => b.total_volume - a.total_volume)
+    .slice(0, 7);
+  const watchIds = new Set(((watchRes.data as { coin_id: string }[] | null) ?? []).map((w) => w.coin_id));
+  const watched = portfolio.markets.filter((m) => watchIds.has(m.id)).slice(0, 6);
+  const stats: { label: string; value: string; sub?: string; tone?: "up" | "down" }[] = [
+    { label: "Total portfolio value", value: formatUsd(portfolio.totalValue) },
+    {
+      label: "24h change",
+      value: `${portfolio.change24hUsd >= 0 ? "+" : "-"}${formatUsd(Math.abs(portfolio.change24hUsd))}`,
+      sub: `${portfolio.change24hPct >= 0 ? "+" : ""}${portfolio.change24hPct.toFixed(2)}%`,
+      tone: portfolio.change24hUsd >= 0 ? "up" : "down",
+    },
+    {
+      label: "All-time profit",
+      value: `${allTimePnl >= 0 ? "+" : "-"}${formatUsd(Math.abs(allTimePnl))}`,
+      sub: costBasis > 0 ? `${allTimePnl >= 0 ? "+" : ""}${((allTimePnl / costBasis) * 100).toFixed(2)}%` : "On coins you bought here",
+      tone: allTimePnl >= 0 ? "up" : "down",
+    },
+    { label: "Number of assets", value: String(crypto.filter((h) => h.amount + h.locked > 0).length), sub: "coins" },
+  ];
   const firstName = profile.full_name?.split(" ")[0];
 
   const checklist = [
@@ -85,6 +113,49 @@ export default async function OverviewPage() {
         withdrawLocked={withdrawLocked}
       />
 
+      {/* Stat tiles */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+        {stats.map((st) => (
+          <div key={st.label} className="card p-4 sm:p-5">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted">{st.label}</p>
+            <p className={cn("num mt-2 font-display text-xl font-bold sm:text-2xl", st.tone === "up" ? "text-up" : st.tone === "down" ? "text-down" : "text-white")}>
+              {st.value}
+            </p>
+            {st.sub && <p className="num mt-0.5 text-xs text-slate">{st.sub}</p>}
+          </div>
+        ))}
+      </div>
+
+      <FearGreedCard data={fearGreed} />
+
+      {/* Trending */}
+      <section className="card p-5 sm:p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-2 font-semibold text-white">
+            <Flame className="size-4 text-warn" /> Trending now
+          </h2>
+          <Link href="/dashboard/markets" className="text-sm text-brand-400 hover:text-brand-300">
+            View all →
+          </Link>
+        </div>
+        <div className="-mx-1 mt-4 flex gap-3 overflow-x-auto px-1 pb-1">
+          {trending.map((m) => (
+            <Link
+              key={m.id}
+              href={`/dashboard/trade?asset=${m.symbol}`}
+              className="w-36 shrink-0 rounded-xl border border-white/[0.06] bg-ink-950/50 p-3.5 transition hover:-translate-y-0.5 hover:border-brand-500/40"
+            >
+              <span className="flex items-center gap-2">
+                <CoinIcon src={m.image} symbol={m.symbol} className="size-6" />
+                <span className="text-sm font-semibold text-white">{m.symbol}</span>
+              </span>
+              <span className="num mt-2.5 block text-sm font-medium text-white">{formatPrice(m.current_price)}</span>
+              <Change value={m.price_change_percentage_24h} className="text-xs" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
         {/* Holdings */}
         <section className="card overflow-hidden">
@@ -103,14 +174,15 @@ export default async function OverviewPage() {
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[560px] text-left">
+              <table className="w-full min-w-[620px] text-left">
                 <thead>
                   <tr className="border-b border-white/5 text-xs text-muted">
                     <th className="px-5 py-3 font-medium sm:px-6">Asset</th>
                     <th className="px-4 py-3 text-right font-medium">Price</th>
                     <th className="px-4 py-3 text-right font-medium">Holdings</th>
                     <th className="hidden px-4 py-3 text-right font-medium md:table-cell">P&amp;L</th>
-                    <th className="hidden px-5 py-3 text-right font-medium sm:table-cell sm:px-6">7d</th>
+                    <th className="hidden px-4 py-3 text-right font-medium lg:table-cell">7d</th>
+                    <th className="px-5 py-3 text-right font-medium sm:px-6">Trade</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -148,8 +220,26 @@ export default async function OverviewPage() {
                           </>
                         )}
                       </td>
-                      <td className="hidden px-5 py-2 sm:table-cell sm:px-6">
+                      <td className="hidden px-4 py-2 lg:table-cell">
                         <div className="flex justify-end">{h.asset !== "USD" && <Sparkline data={h.sparkline} width={96} height={32} />}</div>
+                      </td>
+                      <td className="px-5 py-3.5 sm:px-6">
+                        <div className="flex justify-end gap-1.5">
+                          {h.asset === "USD" || h.asset === QUOTE ? (
+                            <Link href={`/dashboard/deposit?asset=${QUOTE}`} className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a63ff]">
+                              Deposit
+                            </Link>
+                          ) : (
+                            <>
+                              <Link href={`/dashboard/trade?asset=${h.asset}`} className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1a63ff]">
+                                Buy
+                              </Link>
+                              <Link href={`/dashboard/trade?asset=${h.asset}`} className="rounded-lg bg-white/[0.07] px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/15">
+                                Sell
+                              </Link>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -186,18 +276,23 @@ export default async function OverviewPage() {
           )}
         </section>
 
-        {/* Movers */}
+        {/* Watchlist (falls back to today's top movers when empty) */}
         <section className="card p-5 sm:p-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-white">Top movers today</h2>
+            <h2 className="flex items-center gap-2 font-semibold text-white">
+              <Star className="size-4 text-warn" /> {watched.length ? "My watchlist" : "Top movers today"}
+            </h2>
             <Link href="/dashboard/markets" className="text-sm text-brand-400 hover:text-brand-300">
               Markets →
             </Link>
           </div>
           <ul className="mt-3 divide-y divide-white/[0.04]">
-            {movers.map((m) => (
+            {(watched.length ? watched : movers).map((m) => (
               <li key={m.id}>
-                <Link href={`/dashboard/trade?asset=${m.symbol}`} className="flex items-center justify-between gap-3 py-3 hover:opacity-80">
+                <Link
+                  href={ASSET_BY_ID[m.id] && m.symbol !== QUOTE ? `/dashboard/trade?asset=${m.symbol}` : `/price/${m.id}`}
+                  className="flex items-center justify-between gap-3 py-3 hover:opacity-80"
+                >
                   <span className="flex items-center gap-3">
                     <CoinIcon src={m.image} symbol={m.symbol} />
                     <span>
@@ -213,6 +308,7 @@ export default async function OverviewPage() {
               </li>
             ))}
           </ul>
+          {!watched.length && <p className="mt-3 text-xs text-muted">Star coins in Markets to build your own watchlist here.</p>}
         </section>
 
         {/* Account status */}
