@@ -69,7 +69,7 @@ export async function registerAction(_: FormState, fd: FormData): Promise<FormSt
     type: "signup",
     email,
     password,
-    options: { data: { full_name: fullName, country }, redirectTo: `${SITE_URL}/login` },
+    options: { data: { full_name: fullName, country, ref: str(fd, "ref").replace(/[^A-Za-z0-9]/g, "").slice(0, 12).toUpperCase() }, redirectTo: `${SITE_URL}/login` },
   });
 
   if (error) {

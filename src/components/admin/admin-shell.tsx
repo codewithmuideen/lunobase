@@ -8,6 +8,7 @@ import {
   ArrowDownToLine,
   ArrowLeft,
   ArrowUpFromLine,
+  BadgeCheck,
   CandlestickChart,
   LayoutDashboard,
   LifeBuoy,
@@ -23,13 +24,14 @@ import { createClient } from "@/lib/supabase/client";
 import { signOutAction } from "@/actions/auth";
 import { cn } from "@/lib/utils";
 
-export type AdminCounts = { deposits: number; withdrawals: number; tickets: number };
+export type AdminCounts = { deposits: number; withdrawals: number; tickets: number; kyc: number };
 
 const NAV = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/deposits", label: "Deposits", icon: ArrowDownToLine, count: "deposits" as const },
   { href: "/admin/withdrawals", label: "Withdrawals", icon: ArrowUpFromLine, count: "withdrawals" as const },
+  { href: "/admin/kyc", label: "Verification", icon: BadgeCheck, count: "kyc" as const },
   { href: "/admin/trades", label: "Trades", icon: CandlestickChart },
   { href: "/admin/tickets", label: "Support", icon: LifeBuoy, count: "tickets" as const },
   { href: "/admin/audit", label: "Audit log", icon: ScrollText },

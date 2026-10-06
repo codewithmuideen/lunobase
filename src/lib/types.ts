@@ -19,6 +19,9 @@ export type Profile = {
   created_at: string;
   /** Public URL of the uploaded profile photo (stored in the auth user's metadata). */
   avatar_url?: string | null;
+  /** Added by migration 0003. */
+  referral_code?: string | null;
+  referred_by?: string | null;
 };
 
 export type Balance = {

@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    serverActions: { bodySizeLimit: "1mb" },
+    serverActions: { bodySizeLimit: "4mb" },
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

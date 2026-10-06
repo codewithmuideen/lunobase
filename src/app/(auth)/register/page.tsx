@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/register" },
 };
 
-export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ email?: string }> }) {
-  const { email } = await searchParams;
+export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ email?: string; ref?: string }> }) {
+  const { email, ref } = await searchParams;
   return (
     <>
       <h1 className="font-display text-3xl font-bold tracking-tight text-white">Create your account</h1>
       <p className="mt-2 text-slate">Start trading crypto in minutes. It&apos;s free.</p>
-      <RegisterForm defaultEmail={email} />
+      <RegisterForm defaultEmail={email} referralCode={ref} />
     </>
   );
 }

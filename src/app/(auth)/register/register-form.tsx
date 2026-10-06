@@ -10,13 +10,20 @@ import { Turnstile } from "@/components/auth/turnstile";
 import { FormAlert } from "@/components/auth/form-alert";
 import { COUNTRIES } from "@/lib/countries";
 
-export function RegisterForm({ defaultEmail }: { defaultEmail?: string }) {
+export function RegisterForm({ defaultEmail, referralCode }: { defaultEmail?: string; referralCode?: string }) {
+  const ref = (referralCode ?? "").replace(/[^A-Za-z0-9]/g, "").slice(0, 12).toUpperCase();
   const [state, action, pending] = useActionState<FormState, FormData>(registerAction, {});
 
   return (
     <form action={action} className="mt-8 space-y-5" noValidate>
       {state.error && <FormAlert>{state.error}</FormAlert>}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
+      <input type="hidden" name="ref" value={ref} />
+      {ref && (
+        <p className="rounded-xl border border-brand-500/25 bg-brand-500/[0.07] px-4 py-2.5 text-sm text-brand-100">
+          You were invited by a friend. Referral code <span className="font-mono font-semibold">{ref}</span> will be applied.
+        </p>
+      )}
 
       <Field label="Full legal name" htmlFor="full_name">
         <Input id="full_name" name="full_name" autoComplete="name" required defaultValue={state.fields?.full_name} placeholder="Jane Doe" />

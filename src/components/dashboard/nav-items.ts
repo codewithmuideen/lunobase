@@ -1,6 +1,9 @@
 import {
   ArrowDownToLine,
   ArrowUpFromLine,
+  BadgeCheck,
+  FlaskConical,
+  Gift,
   BarChart3,
   CandlestickChart,
   History,
@@ -19,6 +22,7 @@ export const NAV_SECTIONS = [
       { href: "/dashboard/trade", label: "Trade", icon: CandlestickChart },
       { href: "/dashboard/markets", label: "Markets", icon: BarChart3 },
       { href: "/dashboard/wallet", label: "Wallet", icon: Wallet },
+      { href: "/dashboard/demo", label: "Demo account", icon: FlaskConical },
     ],
   },
   {
@@ -32,6 +36,8 @@ export const NAV_SECTIONS = [
   {
     label: "Account",
     items: [
+      { href: "/dashboard/verify", label: "Verify identity", icon: BadgeCheck },
+      { href: "/dashboard/referrals", label: "Refer a friend", icon: Gift },
       { href: "/dashboard/security", label: "Security", icon: ShieldCheck },
       { href: "/dashboard/support", label: "Support", icon: LifeBuoy },
       { href: "/dashboard/settings", label: "Settings", icon: Settings },
