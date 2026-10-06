@@ -18,8 +18,8 @@ const CATEGORIES = [
 
 const PRESETS: Record<string, { subject: string; message: string }> = {
   withdrawal: {
-    subject: "Request for withdrawal access",
-    message: "Hello, I'd like to request access to withdraw funds before my unlock date. Reason: ",
+    subject: "Help with a withdrawal",
+    message: "Hello, I need help with a withdrawal. Details: ",
   },
   deposit: { subject: "Help with a deposit", message: "" },
   account: { subject: "Help with my account", message: "" },

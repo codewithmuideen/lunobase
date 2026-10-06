@@ -25,6 +25,7 @@ export default async function TradePage({ searchParams }: { searchParams: Promis
   const tradable = markets.filter((m) => ASSET_BY_ID[m.id]).map((m) => ({ ...m, sparkline_in_7d: undefined }));
   const bal: Record<string, number> = {};
   for (const b of balances) bal[b.asset] = Number(b.amount);
+  const avgCost = Number(balances.find((b) => b.asset === asset)?.avg_cost ?? 0);
 
   return (
     <TradeTerminal
@@ -37,6 +38,7 @@ export default async function TradePage({ searchParams }: { searchParams: Promis
       trades={(tradesRes.data as Trade[] | null) ?? []}
       tradingEnabled={settings.trading_enabled}
       accountActive={profile.status === "active"}
+      avgCost={avgCost}
     />
   );
 }

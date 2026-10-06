@@ -44,7 +44,7 @@ const faqs = [
   },
   {
     q: "When can I withdraw?",
-    a: "New accounts have a security holding period before withdrawals unlock. Your exact unlock date is always shown in your wallet. If you need help before then, contact our support team from your dashboard.",
+    a: "You can request a withdrawal at any time, including the same day you deposit. There is no waiting period. Withdrawals are not automatic: every request is reviewed and approved by our team before funds are sent, and the amount is held in your account while it is under review. You can follow the status on the Withdraw page.",
   },
   {
     q: "What does it cost to trade?",

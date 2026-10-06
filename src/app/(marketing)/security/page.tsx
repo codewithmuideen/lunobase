@@ -76,8 +76,8 @@ const layers = [
   },
   {
     icon: Activity,
-    title: "Holding period for new accounts",
-    text: "New accounts have a withdrawal holding period, a standard protection against fraud and account takeover.",
+    title: "Approval on every withdrawal",
+    text: "There is no waiting period, but no withdrawal is automatic. Each request is approved by our team before funds leave, which protects you if someone else gets into your account.",
   },
   {
     icon: ShieldCheck,

@@ -84,14 +84,14 @@ export function DashboardShell({
             <ShieldHalf className="size-[18px]" /> Admin panel
           </Link>
         )}
-      </div>
-      <div className="m-3 rounded-2xl border border-white/[0.06] bg-gradient-to-br from-brand-600/20 to-transparent p-4">
+      <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-brand-600/20 to-transparent p-4">
         <ShieldCheck className="size-5 text-brand-400" />
         <p className="mt-2 text-sm font-semibold text-white">Protect your account</p>
         <p className="mt-1 text-xs leading-relaxed text-slate">Set an anti-phishing code so you can spot fake emails instantly.</p>
         <Link href="/dashboard/security" className="mt-3 inline-block text-xs font-semibold text-brand-400 hover:text-brand-300">
           Open security center →
         </Link>
+      </div>
       </div>
     </nav>
   );

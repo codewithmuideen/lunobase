@@ -38,7 +38,7 @@ export default async function SettingsPage() {
               ["Status", <StatusBadge key="s" status={profile.status} />],
               ["Verification", <StatusBadge key="k" status={profile.kyc_status} />],
               ["Member since", formatDate(profile.created_at, false)],
-              ["Withdrawals unlock", profile.withdrawals_enabled ? "Enabled" : formatDate(profile.withdrawal_unlock_at, false)],
+              ["Withdrawals", "Approved by our team"],
             ].map(([k, v]) => (
               <div key={k as string} className="flex items-center justify-between gap-4 py-3">
                 <dt className="text-slate">{k}</dt>

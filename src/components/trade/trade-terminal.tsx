@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { AlertTriangle, ChevronDown, Info, Search, ShieldCheck, Timer } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, ChevronDown, Info, Search, ShieldCheck, Timer, TrendingDown, TrendingUp } from "lucide-react";
 import type { MarketCoin } from "@/lib/market";
 import type { Trade } from "@/lib/types";
 import { QUOTE, TRADABLE_ASSETS } from "@/lib/assets";
@@ -28,6 +28,7 @@ export function TradeTerminal({
   trades,
   tradingEnabled,
   accountActive,
+  avgCost,
 }: {
   asset: string;
   initialMarkets: MarketCoin[];
@@ -37,12 +38,23 @@ export function TradeTerminal({
   trades: Trade[];
   tradingEnabled: boolean;
   accountActive: boolean;
+  /** Average price the user paid per unit of this asset (0 if unknown). */
+  avgCost: number;
 }) {
   const router = useRouter();
   const { bySymbol } = useMarkets(initialMarkets, 20_000);
   const coin = bySymbol[asset];
   const info = TRADABLE_ASSETS.find((a) => a.symbol === asset)!;
   const price = coin?.current_price ?? 0;
+
+  // Which way did the price just move? Drives the up/down arrow next to the live price.
+  const lastPrice = useRef(price);
+  const [tick, setTick] = useState<"up" | "down" | null>(null);
+  useEffect(() => {
+    if (!price || price === lastPrice.current) return;
+    setTick(price > lastPrice.current ? "up" : "down");
+    lastPrice.current = price;
+  }, [price]);
 
   const [side, setSide] = useState<"buy" | "sell">("buy");
   const [input, setInput] = useState("");
@@ -117,7 +129,16 @@ export function TradeTerminal({
       <div className="card flex flex-wrap items-center gap-x-8 gap-y-4 p-4 sm:px-5">
         <PairSelector current={asset} bySymbol={bySymbol} />
         <div>
-          <p className="num font-display text-2xl font-bold text-white">{price ? formatPrice(price) : "-"}</p>
+          <p
+            className={cn(
+              "num flex items-center gap-1.5 font-display text-2xl font-bold transition-colors duration-500",
+              tick === "up" ? "text-up" : tick === "down" ? "text-down" : "text-white",
+            )}
+          >
+            {price ? formatPrice(price) : "-"}
+            {tick === "up" && <ArrowUp className="size-5" aria-label="Price moved up" />}
+            {tick === "down" && <ArrowDown className="size-5" aria-label="Price moved down" />}
+          </p>
           <p className="text-xs text-muted">Live · USDT</p>
         </div>
         <Stat label="24h change">
@@ -244,6 +265,68 @@ export function TradeTerminal({
           </p>
         </div>
       </div>
+
+      {/* Your position: holdings, cost and live gain / loss */}
+      {(() => {
+        const value = held * price;
+        const cost = held * avgCost;
+        const pnl = avgCost > 0 ? value - cost : 0;
+        const pnlPct = cost > 0 ? (pnl / cost) * 100 : 0;
+        const gain = pnl >= 0;
+        const day = coin?.price_change_percentage_24h ?? 0;
+        return (
+          <div className="card p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="font-semibold text-white">Your {asset} position</h2>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold",
+                  day >= 0 ? "bg-up/10 text-up" : "bg-down/10 text-down",
+                )}
+              >
+                {day >= 0 ? <TrendingUp className="size-3.5" /> : <TrendingDown className="size-3.5" />}
+                {asset} is {day >= 0 ? "up" : "down"} {Math.abs(day).toFixed(2)}% today
+              </span>
+            </div>
+            {held > 0 ? (
+              <dl className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
+                <div>
+                  <dt className="text-xs text-muted">You hold</dt>
+                  <dd className="num mt-1 font-semibold text-white">
+                    {formatAmount(held)} {asset}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted">Current value</dt>
+                  <dd className="num mt-1 font-semibold text-white">{formatAmount(value, 2)} USDT</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted">Average buy price</dt>
+                  <dd className="num mt-1 font-semibold text-white">{avgCost > 0 ? formatPrice(avgCost) : "-"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted">{avgCost > 0 ? (gain ? "Gain so far" : "Loss so far") : "Gain / loss"}</dt>
+                  <dd className={cn("num mt-1 flex items-center gap-1.5 font-semibold", avgCost <= 0 ? "text-slate" : gain ? "text-up" : "text-down")}>
+                    {avgCost > 0 ? (
+                      <>
+                        {gain ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />}
+                        {gain ? "+" : "-"}
+                        {formatAmount(Math.abs(pnl), 2)} USDT ({gain ? "+" : "-"}
+                        {Math.abs(pnlPct).toFixed(2)}%)
+                      </>
+                    ) : (
+                      "Not available for deposited coins"
+                    )}
+                  </dd>
+                </div>
+              </dl>
+            ) : (
+              <p className="mt-3 text-sm text-slate">You don&apos;t hold any {asset} yet. After you buy, your gain or loss shows here and updates with the live price.</p>
+            )}
+            <p className="mt-4 text-xs text-muted">Gain or loss is unrealised until you sell, and changes as the price moves. Prices can go down as well as up.</p>
+          </div>
+        );
+      })()}
 
       {/* Order history */}
       <div className="card overflow-hidden">

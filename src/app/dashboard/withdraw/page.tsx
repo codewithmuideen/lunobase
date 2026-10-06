@@ -83,7 +83,7 @@ export default async function WithdrawPage({ searchParams }: { searchParams: Pro
           ) : (
             <>
               <div className="mb-6 flex items-center gap-3 rounded-xl bg-up/[0.07] px-4 py-3 text-sm text-silver">
-                <ShieldCheck className="size-4 shrink-0 text-up" /> Withdrawals are enabled. Each request is reviewed by our security team.
+                <ShieldCheck className="size-4 shrink-0 text-up" /> Request a withdrawal any time. It is not automatic: our team approves each request before funds are sent.
               </div>
               <WithdrawForm balances={bal} defaultAsset={asset?.toUpperCase()} />
             </>

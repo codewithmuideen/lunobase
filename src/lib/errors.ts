@@ -3,7 +3,7 @@ const FRIENDLY: Record<string, string> = {
   ACCOUNT_FROZEN: "Your account is frozen. Contact support to restore access.",
   ACCOUNT_SUSPENDED: "Your account is suspended. Contact support.",
   ACCOUNT_NOT_FOUND: "Account not found.",
-  WITHDRAWAL_LOCKED: "Withdrawals are locked for your account until your unlock date. Contact support for help.",
+  WITHDRAWAL_LOCKED: "Withdrawals are paused on your account. Please contact support.",
   TRADING_DISABLED: "Trading is temporarily paused for maintenance.",
   INVALID_AMOUNT: "Enter a valid amount.",
   INVALID_ASSET: "This asset isn't supported.",

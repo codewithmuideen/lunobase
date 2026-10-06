@@ -19,8 +19,8 @@ const faq = [
     a: "Crypto deposits need network confirmations, which usually take a few minutes to an hour. Once confirmed, your balance updates automatically. If it's been longer, open a ticket with your transaction reference.",
   },
   {
-    q: "Why can't I withdraw yet?",
-    a: "New accounts have a security holding period. Your unlock date is shown on the Withdraw page. If you have an urgent need, contact support from your dashboard and our team will review your account.",
+    q: "How do withdrawals work?",
+    a: "Request a withdrawal any time from the Withdraw page; there is no waiting period. Withdrawals are not automatic: our team reviews and approves each request before sending the funds, and the amount is held while it is under review. If your request is taking long, open a support ticket or email payment@lunobase.com.",
   },
   {
     q: "How do I secure my account?",

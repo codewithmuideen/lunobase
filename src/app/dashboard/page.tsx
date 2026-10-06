@@ -321,7 +321,7 @@ export default async function OverviewPage() {
               <div>
                 <p className="font-semibold text-white">{withdrawLocked ? "Withdrawals locked" : "Withdrawals available"}</p>
                 <p className="text-xs text-slate">
-                  {withdrawLocked ? `Unlocks ${formatDate(unlockAt, false)} · ${daysLeft} day${daysLeft === 1 ? "" : "s"} left` : "Every withdrawal is reviewed for your safety."}
+                  {withdrawLocked ? `Unlocks ${formatDate(unlockAt, false)} · ${daysLeft} day${daysLeft === 1 ? "" : "s"} left` : "Request any time. Each one is approved by our team."}
                 </p>
               </div>
             </div>
