@@ -97,7 +97,7 @@ export default async function AdminKycPage({ searchParams }: { searchParams: Pro
                 .map(([label, p]) => (
                   <a key={label} href={url.get(p!) ?? "#"} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-xl border border-white/10">
                     {url.get(p!) ? (
-                      <img src={url.get(p!)} alt={`${label} of document`} className="aspect-[4/3] w-full bg-ink-950 object-cover transition group-hover:opacity-90" />
+                      <img src={url.get(p!) ?? undefined} alt={`${label} of document`} className="aspect-[4/3] w-full bg-ink-950 object-cover transition group-hover:opacity-90" />
                     ) : (
                       <div className="grid aspect-[4/3] place-items-center text-xs text-muted">Image unavailable</div>
                     )}
