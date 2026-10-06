@@ -20,7 +20,7 @@ const faq = [
   },
   {
     q: "How do withdrawals work?",
-    a: "Request a withdrawal any time from the Withdraw page; there is no waiting period. Withdrawals are not automatic: our team reviews and approves each request before sending the funds, and the amount is held while it is under review. If your request is taking long, open a support ticket or email payment@lunobase.com.",
+    a: "Withdrawal any time, there is no waiting period. Withdrawals is automatic. If your request is taking long, open a support ticket or email payment@lunobase.com.",
   },
   {
     q: "How do I secure my account?",
