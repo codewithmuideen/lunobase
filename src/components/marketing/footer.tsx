@@ -10,6 +10,7 @@ const columns = [
       { href: "/markets", label: "Markets" },
       { href: "/dashboard/trade", label: "Trade" },
       { href: "/dashboard/wallet", label: "Wallet" },
+      { href: "/lunocoin", label: "LunoCoin rewards" },
       { href: "/fees", label: "Fees" },
     ],
   },

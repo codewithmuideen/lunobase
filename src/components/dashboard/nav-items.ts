@@ -2,6 +2,7 @@ import {
   ArrowDownToLine,
   ArrowUpFromLine,
   BadgeCheck,
+  Coins,
   FlaskConical,
   Gift,
   BarChart3,
@@ -14,7 +15,9 @@ import {
   Wallet,
 } from "lucide-react";
 
-export const NAV_SECTIONS = [
+type NavItem = { href: string; label: string; icon: typeof Coins; badge?: string };
+
+export const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   {
     label: "Main",
     items: [
@@ -22,6 +25,7 @@ export const NAV_SECTIONS = [
       { href: "/dashboard/trade", label: "Trade", icon: CandlestickChart },
       { href: "/dashboard/markets", label: "Markets", icon: BarChart3 },
       { href: "/dashboard/wallet", label: "Wallet", icon: Wallet },
+      { href: "/dashboard/rewards", label: "LunoCoin rewards", icon: Coins, badge: "New" },
       { href: "/dashboard/demo", label: "Demo account", icon: FlaskConical },
     ],
   },

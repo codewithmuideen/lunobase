@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { awardLnc } from "@/lib/lnc";
+import { LNC } from "@/lib/lunocoin";
 import { after } from "next/server";
 import { currentAdmin, getProfile } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -37,6 +39,7 @@ export async function approveDepositAction(input: { id: string; amount?: number;
   if (error) return { ok: false, error: friendlyError(error.message) };
 
   const dep = data as Deposit;
+  await awardLnc(dep.user_id, "first_deposit", LNC.rewards.firstDeposit, "once", "First deposit approved");
   const user = await getProfile(dep.user_id);
   if (user) {
     after(() => sendEmail(

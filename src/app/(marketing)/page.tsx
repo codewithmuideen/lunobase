@@ -280,6 +280,45 @@ export default async function HomePage() {
         </Container>
       </section>
 
+      {/* ---------------------------------------------------------- LunoCoin */}
+      <section className="pb-24 sm:pb-28">
+        <Container>
+          <div className="card-raised relative overflow-hidden p-6 sm:p-10 lg:p-12">
+            <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-brand-600/25 blur-3xl" />
+            <div className="relative grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+              <div>
+                <p className="eyebrow">New: LunoCoin rewards</p>
+                <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Get rewarded for trading, and pay up to 50% less in fees</h2>
+                <p className="mt-4 text-base leading-relaxed text-slate sm:text-lg">
+                  Earn LunoCoin (LNC) when you sign up, verify, deposit, trade, invite friends and share. The more you hold, the lower your trading fee.
+                </p>
+                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                  <ButtonLink href="/register" size="lg" className="rounded-full">
+                    Start earning
+                  </ButtonLink>
+                  <ButtonLink href="/lunocoin" variant="secondary" size="lg" className="rounded-full">
+                    How it works
+                  </ButtonLink>
+                </div>
+              </div>
+              <ul className="grid grid-cols-2 gap-3">
+                {[
+                  ["100 LNC", "when you sign up"],
+                  ["500 LNC", "for verifying your identity"],
+                  ["300 LNC", "per friend who trades"],
+                  ["2 LNC", "per 10 USDT traded"],
+                ].map(([n, t]) => (
+                  <li key={t} className="rounded-2xl border border-white/[0.07] bg-ink-950/50 p-4 sm:p-5">
+                    <p className="num font-display text-xl font-bold text-white sm:text-2xl">{n}</p>
+                    <p className="mt-1 text-xs text-slate sm:text-sm">{t}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Container>
+      </section>
+
       {/* ---------------------------------------------------------- FAQ */}
       <section className="pb-24 sm:pb-28">
         <Container className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">

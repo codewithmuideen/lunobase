@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Circle, Clock, Flame, History, Lock, Star, Unlock } from "lucide-react";
+import { ArrowRight, CheckCircle2, Circle, Clock, Coins, Flame, History, Lock, Star, Unlock } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { getPortfolio } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
@@ -116,15 +116,29 @@ export default async function OverviewPage() {
       {/* Stat tiles */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {stats.map((st) => (
-          <div key={st.label} className="card p-4 sm:p-5">
+          <div key={st.label} className="card min-w-0 p-3.5 min-[360px]:p-4 sm:p-5">
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted">{st.label}</p>
-            <p className={cn("num mt-2 font-display text-xl font-bold sm:text-2xl", st.tone === "up" ? "text-up" : st.tone === "down" ? "text-down" : "text-white")}>
+            <p className={cn("num mt-2 whitespace-nowrap font-display text-[15px] font-bold min-[360px]:text-lg min-[400px]:text-xl sm:text-2xl", st.tone === "up" ? "text-up" : st.tone === "down" ? "text-down" : "text-white")}>
               {st.value}
             </p>
             {st.sub && <p className="num mt-0.5 text-xs text-slate">{st.sub}</p>}
           </div>
         ))}
       </div>
+
+      <Link
+        href="/dashboard/rewards"
+        className="group flex items-center gap-4 rounded-2xl border border-brand-500/25 bg-gradient-to-r from-brand-600/20 via-brand-600/5 to-transparent p-4 transition hover:border-brand-500/50 sm:p-5"
+      >
+        <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-600/25 text-brand-300">
+          <Coins className="size-5" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-semibold text-white">Earn LunoCoin, pay lower fees</span>
+          <span className="block text-xs text-slate sm:text-sm">Get LNC for trading, inviting friends, sharing and checking in daily. Up to 50% off trading fees.</span>
+        </span>
+        <ArrowRight className="size-4 shrink-0 text-brand-300 transition-transform group-hover:translate-x-0.5" />
+      </Link>
 
       <FearGreedCard data={fearGreed} />
 

@@ -12,6 +12,8 @@ import { templates } from "@/lib/email/templates";
 import { friendlyError } from "@/lib/errors";
 import { formatAmount, formatPrice, formatUsd } from "@/lib/utils";
 import { getSettings } from "@/lib/data";
+import { awardLnc, getLncBalance } from "@/lib/lnc";
+import { LNC, discountedFeeBps, tradeReward } from "@/lib/lunocoin";
 import type { ActionResult, Trade } from "@/lib/types";
 
 const MAX_SLIPPAGE = 0.02; // reject if price moved >2% since the user saw the quote
@@ -57,7 +59,9 @@ export async function placeOrderAction(input: OrderInput): Promise<ActionResult<
     return { ok: false, error: `The price moved to ${formatPrice(price)}. Please review and try again.` };
   }
 
-  const feeRate = settings.trading_fee_bps / 10000;
+  // LunoCoin holders pay a lower fee (20% off from 1,000 LNC, 50% off from 10,000 LNC).
+  const feeBps = discountedFeeBps(settings.trading_fee_bps, (await getLncBalance(profile.id)).balance);
+  const feeRate = feeBps / 10000;
   let quantity: number;
   if (side === "buy") {
     if (amount < Number(settings.min_trade_usd)) {
@@ -80,7 +84,7 @@ export async function placeOrderAction(input: OrderInput): Promise<ActionResult<
     p_quote: QUOTE,
     p_quantity: quantity,
     p_price: price,
-    p_fee_bps: settings.trading_fee_bps,
+    p_fee_bps: feeBps,
   } as never);
   if (error) {
     if (error.code === "PGRST202" || /execute_trade_quote/.test(error.message)) {
@@ -111,10 +115,16 @@ export async function placeOrderAction(input: OrderInput): Promise<ActionResult<
     );
   }
 
+  // LunoCoin: 2 LNC per 10 USDT traded, plus a one-off reward to whoever referred this user.
+  const earned = await awardLnc(profile.id, "trade", tradeReward(Number(trade.gross_usd)), trade.id, `${side === "buy" ? "Bought" : "Sold"} ${asset}`);
+  if (profile.referred_by) {
+    after(() => awardLnc(profile.referred_by!, "referral", LNC.rewards.referral, profile.id, "A friend you referred made a trade"));
+  }
+
   revalidatePath("/dashboard", "layout");
   return {
     ok: true,
     data: trade,
-    message: `${side === "buy" ? "Bought" : "Sold"} ${formatAmount(trade.quantity)} ${asset} at ${formatPrice(Number(trade.price))}`,
+    message: `${side === "buy" ? "Bought" : "Sold"} ${formatAmount(trade.quantity)} ${asset} at ${formatPrice(Number(trade.price))}${earned ? `. +${earned} ${LNC.symbol} earned` : ""}`,
   };
 }

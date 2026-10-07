@@ -55,7 +55,7 @@ export function DashboardShell({
           <div key={section.label}>
             <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">{section.label}</p>
             <ul className="mt-2 space-y-0.5">
-              {section.items.map(({ href, label, icon: Icon }) => {
+              {section.items.map(({ href, label, icon: Icon, badge }) => {
                 const active = isActive(pathname, href);
                 return (
                   <li key={href}>
@@ -69,6 +69,7 @@ export function DashboardShell({
                       {active && <span className="absolute inset-y-2 left-0 w-[3px] rounded-r-full bg-brand-500" />}
                       <Icon className={cn("size-[18px]", active ? "text-brand-400" : "text-muted group-hover:text-silver")} />
                       {label}
+                      {badge && <span className="ml-auto rounded-full bg-brand-600/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-300">{badge}</span>}
                     </Link>
                   </li>
                 );

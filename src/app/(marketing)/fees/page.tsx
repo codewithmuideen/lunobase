@@ -34,6 +34,8 @@ export default async function FeesPage() {
     ["Account maintenance", "Free"],
     ["Deposit (BTC, ETH, USDT)", "Free"],
     ["Buy / sell (market order)", `${pct}%`],
+    ["With 1,000 LunoCoin", "20% off trading fees"],
+    ["With 10,000 LunoCoin", "50% off trading fees"],
     ["Minimum order", `${fees.min_trade_usd} USDT`],
     ["Withdrawal", "Network fee only"],
   ];

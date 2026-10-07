@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ArrowRight, BarChart3, CandlestickChart, ChevronRight, Info, LifeBuoy, Receipt, ShieldCheck } from "lucide-react";
+import { ArrowRight, BarChart3, CandlestickChart, ChevronRight, Coins, Info, LifeBuoy, Receipt, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/markets", label: "Markets", icon: BarChart3, desc: "Live prices for 100+ assets" },
   { href: "/dashboard/trade", label: "Trade", icon: CandlestickChart, desc: "Buy and sell in seconds" },
+  { href: "/lunocoin", label: "Rewards", icon: Coins, desc: "Earn LunoCoin and pay lower fees" },
   { href: "/security", label: "Security", icon: ShieldCheck, desc: "How we protect your account" },
   { href: "/fees", label: "Fees", icon: Receipt, desc: "Simple, transparent pricing" },
   { href: "/about", label: "About", icon: Info, desc: "Our mission and values" },

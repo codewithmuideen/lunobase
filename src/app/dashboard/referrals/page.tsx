@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Gift, Link2, UserPlus, Users, Wallet } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -43,6 +44,13 @@ export default async function ReferralsPage() {
               <div className="mt-5">
                 <ReferralShare link={link} code={code!} />
               </div>
+              <p className="mt-4 text-sm text-slate">
+                Bonus: you also earn 300 LNC for each friend who trades, and 20 LNC per share on the{" "}
+                <Link href="/dashboard/rewards" className="font-semibold text-brand-400 hover:text-brand-300">
+                  LunoCoin rewards
+                </Link>{" "}
+                page.
+              </p>
             </div>
           </section>
 

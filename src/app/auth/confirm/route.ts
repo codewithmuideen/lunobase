@@ -5,6 +5,8 @@ import { getProfile } from "@/lib/auth";
 import { sendEmail } from "@/lib/email/send";
 import { templates } from "@/lib/email/templates";
 import { logSecurityEvent } from "@/lib/security/events";
+import { awardLnc } from "@/lib/lnc";
+import { LNC } from "@/lib/lunocoin";
 
 // Handles links from our branded verification / password-reset emails.
 export async function GET(request: NextRequest) {
@@ -25,6 +27,7 @@ export async function GET(request: NextRequest) {
   // Email confirmed. Send welcome, then require a normal sign-in (password + OTP).
   const profile = await getProfile(data.user.id);
   await logSecurityEvent(data.user.id, "email_verified");
+  await awardLnc(data.user.id, "signup", LNC.rewards.signup, "once", "Welcome bonus for joining Lunobase");
   if (profile) await sendEmail(profile.email, templates.welcome({ name: profile.full_name }));
   await supabase.auth.signOut();
   return NextResponse.redirect(`${origin}/login?verified=1`);

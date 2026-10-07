@@ -4,6 +4,8 @@ import { getMarkets } from "@/lib/market";
 import { createClient } from "@/lib/supabase/server";
 import { ASSET_BY_ID, ASSET_BY_SYMBOL, QUOTE } from "@/lib/assets";
 import type { Trade } from "@/lib/types";
+import { getLncBalance } from "@/lib/lnc";
+import { discountedFeeBps, lncTier } from "@/lib/lunocoin";
 import { TradeTerminal } from "@/components/trade/trade-terminal";
 
 export const metadata = { title: "Trade" };
@@ -15,7 +17,8 @@ export default async function TradePage({ searchParams }: { searchParams: Promis
   const asset = wanted && ASSET_BY_SYMBOL[wanted] && wanted !== QUOTE ? wanted : "BTC";
 
   const supabase = await createClient();
-  const [balances, settings, markets, tradesRes] = await Promise.all([
+  const [lnc, balances, settings, markets, tradesRes] = await Promise.all([
+    getLncBalance(profile.id),
     getBalances(profile.id),
     getSettings(),
     getMarkets(250),
@@ -33,7 +36,8 @@ export default async function TradePage({ searchParams }: { searchParams: Promis
       asset={asset}
       initialMarkets={tradable}
       balances={bal}
-      feeBps={settings.trading_fee_bps}
+      feeBps={discountedFeeBps(settings.trading_fee_bps, lnc.balance)}
+      feeDiscountPct={Math.round(lncTier(lnc.balance).discount * 100)}
       minTrade={Number(settings.min_trade_usd)}
       trades={(tradesRes.data as Trade[] | null) ?? []}
       tradingEnabled={settings.trading_enabled}

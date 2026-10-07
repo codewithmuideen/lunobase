@@ -13,6 +13,8 @@ import { getProfile } from "@/lib/auth";
 import { templates } from "@/lib/email/templates";
 import { friendlyError } from "@/lib/errors";
 import { formatAmount, formatPrice } from "@/lib/utils";
+import { awardLnc } from "@/lib/lnc";
+import { LNC } from "@/lib/lunocoin";
 import type { ActionResult } from "@/lib/types";
 
 const EXPIRED = { ok: false as const, error: "Your session has expired. Please sign in again." };
@@ -164,6 +166,7 @@ export async function reviewKycAction(input: { id: string; approve: boolean; not
     } as never),
     db.from("audit_log").insert({ admin_id: admin.profile.id, action: input.approve ? "kyc.approve" : "kyc.reject", target_user: userId, details: { submission: input.id, note } } as never),
   ]);
+  if (input.approve) await awardLnc(userId, "kyc", LNC.rewards.kyc, "once", "Identity verification completed");
   const user = await getProfile(userId);
   if (user) {
     after(() =>

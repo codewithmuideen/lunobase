@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { AlertTriangle, ArrowDown, ArrowUp, ChevronDown, Info, Search, ShieldCheck, Timer, TrendingDown, TrendingUp } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, ChevronDown, Coins, Info, Search, ShieldCheck, Timer, TrendingDown, TrendingUp } from "lucide-react";
 import type { MarketCoin } from "@/lib/market";
 import type { Trade } from "@/lib/types";
 import { QUOTE, TRADABLE_ASSETS } from "@/lib/assets";
@@ -24,6 +24,7 @@ export function TradeTerminal({
   initialMarkets,
   balances,
   feeBps,
+  feeDiscountPct = 0,
   minTrade,
   trades,
   tradingEnabled,
@@ -34,6 +35,8 @@ export function TradeTerminal({
   initialMarkets: MarketCoin[];
   balances: Record<string, number>;
   feeBps: number;
+  /** LunoCoin fee discount already applied to feeBps, as a percentage (0, 20 or 50). */
+  feeDiscountPct?: number;
   minTrade: number;
   trades: Trade[];
   tradingEnabled: boolean;
@@ -230,6 +233,13 @@ export function TradeTerminal({
               </Row>
             </div>
           </dl>
+          <Link href="/dashboard/rewards" className="mt-3 flex items-center gap-2 rounded-xl border border-brand-500/20 bg-brand-500/[0.06] px-3.5 py-2.5 text-xs text-silver transition hover:border-brand-500/40">
+            <Coins className="size-4 shrink-0 text-brand-400" />
+            <span>
+              {feeDiscountPct > 0 ? `Your LunoCoin saves you ${feeDiscountPct}% on fees. ` : ""}
+              Earn 2 LNC for every 10 USDT you trade.
+            </span>
+          </Link>
 
           {error && (
             <p className="mt-3 flex items-center gap-2 text-sm text-down">

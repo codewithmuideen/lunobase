@@ -61,13 +61,13 @@ export function BalanceCard({
               {hidden ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
           </div>
-          <p className="num mt-2 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">{mask(formatUsd(total))}</p>
+          <p className="num mt-2 font-display break-words text-[32px] font-bold leading-tight tracking-tight text-white min-[380px]:text-4xl sm:text-5xl">{mask(formatUsd(total))}</p>
           <p className={cn("num mt-2 text-sm font-medium", up ? "text-up" : "text-down")}>
             {mask(`${up ? "+" : "−"}${formatUsd(Math.abs(change24hUsd))}`)} ({up ? "+" : ""}
             {change24hPct.toFixed(2)}%) <span className="font-normal text-muted">today</span>
           </p>
 
-          <dl className="mt-6 grid grid-cols-3 gap-3 border-t border-white/5 pt-5 text-sm">
+          <dl className="mt-6 grid grid-cols-2 gap-x-3 gap-y-4 border-t border-white/5 pt-5 text-sm min-[420px]:grid-cols-3 [&>div]:min-w-0 [&_dd]:break-words">
             <div>
               <dt className="text-xs text-muted">Available</dt>
               <dd className="num mt-1 font-semibold text-white">{mask(formatUsd(available))}</dd>
