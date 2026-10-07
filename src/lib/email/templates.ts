@@ -300,6 +300,37 @@ export const templates = {
     };
   },
 
+  kycReceived({ name, antiPhishing }: Common): EmailContent {
+    return {
+      subject: "We received your identity documents",
+      text: "Your documents are under review. We usually finish within 24 hours.",
+      html: layout({
+        preheader: "Your identity verification is under review.",
+        title: "Documents received",
+        body: `${hello(name)}<br><br>Thanks for submitting your ID and passport photograph. Our team reviews every submission by hand, usually within <strong>24 hours</strong>. We'll email you as soon as it's done.`,
+        cta: { label: "View verification status", url: `${APP_URL}/dashboard/verify` },
+        antiPhishing,
+        footerNote: "Didn't submit these documents? Contact us straight away at info@lunobase.com.",
+      }),
+    };
+  },
+
+  kycResult({ name, approved, note, antiPhishing }: Common & { approved: boolean; note?: string | null }): EmailContent {
+    return {
+      subject: approved ? "Your identity is verified" : "We couldn't verify your identity",
+      text: approved ? "Your Lunobase account is now verified." : `Your verification was not approved. ${note ?? ""}`,
+      html: layout({
+        preheader: approved ? "Your account is now verified." : "Please submit your documents again.",
+        title: approved ? "You're verified" : "Verification not approved",
+        body: approved
+          ? `${hello(name)}<br><br>Your identity has been confirmed and your account is now fully verified. Thank you for helping us keep Lunobase safe.`
+          : `${hello(name)}<br><br>We couldn't approve your identity verification this time.${note ? `<br><br>Reason: ${esc(note)}` : ""}<br><br>Please check your photos are clear and submit again.`,
+        cta: { label: approved ? "Go to dashboard" : "Submit again", url: `${APP_URL}/dashboard${approved ? "" : "/verify"}` },
+        antiPhishing,
+      }),
+    };
+  },
+
   adminAlert({ title, lines, url }: { title: string; lines: [string, string][]; url: string }): EmailContent {
     return {
       subject: `[Lunobase Admin] ${title}`,

@@ -71,7 +71,7 @@ export default async function VerifyIdentityPage() {
             ))}
           </ul>
           <p className="mt-5 border-t border-white/5 pt-4 text-xs text-muted">
-            Accepted: national ID card, passport or driver&apos;s licence. Questions? info@lunobase.com
+            You need: the front and back of your ID (or your passport data page) and a passport photograph. Accepted: national ID card, passport or driver&apos;s licence. Questions? info@lunobase.com
           </p>
         </aside>
       </div>

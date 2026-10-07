@@ -10,8 +10,14 @@ function client() {
   return resend;
 }
 
+export type EmailAttachment = { filename: string; content: Buffer; contentType?: string };
+
 /** Sends an email. Never throws - email failures must not break trades or logins. */
-export async function sendEmail(to: string, content: EmailContent): Promise<boolean> {
+export async function sendEmail(
+  to: string | string[],
+  content: EmailContent,
+  opts: { attachments?: EmailAttachment[]; replyTo?: string } = {},
+): Promise<boolean> {
   const c = client();
   if (!c) {
     console.warn(`[email] RESEND_API_KEY missing - would send "${content.subject}" to ${to}`);
@@ -20,11 +26,12 @@ export async function sendEmail(to: string, content: EmailContent): Promise<bool
   try {
     const { error } = await c.emails.send({
       from: process.env.EMAIL_FROM ?? "Lunobase <no-reply@lunobase.com>",
-      replyTo: process.env.SUPPORT_EMAIL,
+      replyTo: opts.replyTo ?? process.env.SUPPORT_EMAIL,
       to,
       subject: content.subject,
       html: content.html,
       text: content.text,
+      ...(opts.attachments?.length ? { attachments: opts.attachments } : {}),
     });
     if (error) {
       console.error("[email] send failed", error);

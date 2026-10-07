@@ -91,7 +91,7 @@ export default async function AdminKycPage({ searchParams }: { searchParams: Pro
               {[
                 ["Front", r.front_path],
                 ["Back", r.back_path],
-                ["Selfie", r.selfie_path],
+                ["Passport photo", r.selfie_path],
               ]
                 .filter(([, p]) => p)
                 .map(([label, p]) => (

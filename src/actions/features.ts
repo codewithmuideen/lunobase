@@ -8,7 +8,8 @@ import { ASSET_BY_SYMBOL, QUOTE } from "@/lib/assets";
 import { getExecutionPrice } from "@/lib/market";
 import { SITE_URL } from "@/lib/env";
 import { rateLimit } from "@/lib/security/rate-limit";
-import { sendAdminAlert } from "@/lib/email/send";
+import { sendAdminAlert, sendEmail, type EmailAttachment } from "@/lib/email/send";
+import { getProfile } from "@/lib/auth";
 import { templates } from "@/lib/email/templates";
 import { friendlyError } from "@/lib/errors";
 import { formatAmount, formatPrice } from "@/lib/utils";
@@ -66,11 +67,14 @@ export async function submitKycAction(fd: FormData): Promise<ActionResult> {
   const db = createAdminClient();
   const stamp = Date.now();
   const paths: Record<string, string | null> = { front: null, back: null, selfie: null };
+  const attachments: EmailAttachment[] = [];
+  const NAMES = { front: "id-front", back: "id-back", selfie: "passport-photo" } as const;
   for (const key of ["front", "back", "selfie"] as const) {
     const file = fd.get(key);
     if (!(file instanceof File) || file.size === 0) {
-      if (key === "back") continue; // back side is optional (passports have none)
-      return { ok: false, error: key === "front" ? "Upload a photo of your document." : "Upload a selfie holding your document." };
+      if (key === "back" && docType === "passport") continue; // a passport has no back side
+      const what = { front: "the front of your ID", back: "the back of your ID", selfie: "your passport photograph" }[key];
+      return { ok: false, error: `Please upload ${what}.` };
     }
     if (file.size > KYC_MAX_BYTES) return { ok: false, error: "One of the images is too large. Please retake it." };
     const bytes = new Uint8Array(await file.arrayBuffer());
@@ -83,6 +87,7 @@ export async function submitKycAction(fd: FormData): Promise<ActionResult> {
       return { ok: false, error: "Could not upload your documents. Please try again." };
     }
     paths[key] = path;
+    attachments.push({ filename: `${NAMES[key]}.${kind.ext}`, content: Buffer.from(bytes), contentType: kind.mime });
   }
 
   const { error } = await db.from("kyc_submissions").insert({
@@ -102,14 +107,28 @@ export async function submitKycAction(fd: FormData): Promise<ActionResult> {
   }
   await db.from("profiles").update({ kyc_status: "pending" } as never).eq("id", profile.id);
 
+  // After the response: email the documents to the verification inbox (as attachments),
+  // alert the admin, and confirm receipt to the user.
+  const reviewInbox = process.env.KYC_REVIEW_EMAIL || "info@lunobase.com";
+  const alert = templates.adminAlert({
+    title: "New identity verification to review",
+    lines: [
+      ["User", profile.email],
+      ["Name on ID", legalName],
+      ["Date of birth", dob],
+      ["Country", country],
+      ["Document", docType.replace("_", " ")],
+      ["Document number", docNumber],
+      ["Attached", attachments.map((a) => a.filename).join(", ")],
+    ],
+    url: `${SITE_URL}/admin/kyc`,
+  });
   after(() =>
-    sendAdminAlert(
-      templates.adminAlert({
-        title: "New identity verification to review",
-        lines: [["User", profile.email], ["Name on ID", legalName], ["Document", docType.replace("_", " ")]],
-        url: `${SITE_URL}/admin/kyc`,
-      }),
-    ),
+    Promise.all([
+      sendEmail(reviewInbox, alert, { attachments, replyTo: profile.email }),
+      process.env.ADMIN_EMAIL && process.env.ADMIN_EMAIL !== reviewInbox ? sendAdminAlert(alert) : null,
+      sendEmail(profile.email, templates.kycReceived({ name: profile.full_name, antiPhishing: profile.anti_phishing_code })),
+    ]),
   );
   revalidatePath("/dashboard", "layout");
   revalidatePath("/admin", "layout");
@@ -145,6 +164,12 @@ export async function reviewKycAction(input: { id: string; approve: boolean; not
     } as never),
     db.from("audit_log").insert({ admin_id: admin.profile.id, action: input.approve ? "kyc.approve" : "kyc.reject", target_user: userId, details: { submission: input.id, note } } as never),
   ]);
+  const user = await getProfile(userId);
+  if (user) {
+    after(() =>
+      sendEmail(user.email, templates.kycResult({ name: user.full_name, approved: input.approve, note, antiPhishing: user.anti_phishing_code })),
+    );
+  }
   revalidatePath("/admin", "layout");
   revalidatePath("/dashboard", "layout");
   return { ok: true, message: input.approve ? "User verified." : "Submission rejected." };

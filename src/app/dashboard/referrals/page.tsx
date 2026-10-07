@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { SITE_URL } from "@/lib/env";
 import { formatAmount, formatDate, maskEmail } from "@/lib/utils";
 import { EmptyState, PageHeader } from "@/components/dashboard/page-header";
-import { CopyField } from "@/components/ui/copy-field";
+import { ReferralShare } from "@/components/dashboard/referral-share";
 
 export const metadata = { title: "Referrals" };
 
@@ -36,13 +36,13 @@ export default async function ReferralsPage() {
           <section className="card-raised relative overflow-hidden p-6 sm:p-8">
             <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 size-64 rounded-full bg-brand-600/25 blur-3xl" />
             <div className="relative">
-              <p className="flex items-center gap-2 text-sm font-semibold text-brand-300">
-                <Link2 className="size-4" /> Your referral link
+              <p className="flex items-center gap-2 font-display text-lg font-semibold text-white">
+                <Link2 className="size-5 text-brand-400" /> Invite friends, earn together
               </p>
-              <CopyField value={link} label="referral link" className="mt-3" />
-              <p className="mt-4 text-sm text-slate">
-                Or share your code: <span className="font-mono font-semibold text-white">{code}</span>
-              </p>
+              <p className="mt-1 text-sm text-slate">Send your link or code to a friend. When they sign up and trade, you earn a share of their fees.</p>
+              <div className="mt-5">
+                <ReferralShare link={link} code={code!} />
+              </div>
             </div>
           </section>
 
@@ -91,9 +91,9 @@ export default async function ReferralsPage() {
               ) : (
                 <ul className="mt-3 divide-y divide-white/[0.04]">
                   {friends.map((f) => (
-                    <li key={f.email} className="flex items-center justify-between gap-3 py-3 text-sm">
-                      <span className="text-white">{maskEmail(f.email)}</span>
-                      <span className="text-xs text-muted">Joined {formatDate(f.created_at, false)}</span>
+                    <li key={f.email} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 py-3 text-sm">
+                      <span className="min-w-0 break-all text-white">{maskEmail(f.email)}</span>
+                      <span className="shrink-0 text-xs text-muted">Joined {formatDate(f.created_at, false)}</span>
                     </li>
                   ))}
                 </ul>

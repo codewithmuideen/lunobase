@@ -94,14 +94,14 @@ export function KycForm({ defaultName, defaultCountry }: { defaultName: string; 
       </div>
 
       <div className={cn("grid gap-4", needsBack ? "sm:grid-cols-3" : "sm:grid-cols-2")}>
-        <PhotoSlot label={docType === "passport" ? "Passport photo page" : "Front of document"} icon={IdCard} preview={previews.front} loading={busy === "front"} onPick={(f) => pick("front", f)} />
-        {needsBack && <PhotoSlot label="Back of document" icon={IdCard} preview={previews.back} loading={busy === "back"} onPick={(f) => pick("back", f)} />}
-        <PhotoSlot label="Selfie holding the document" icon={Camera} preview={previews.selfie} loading={busy === "selfie"} onPick={(f) => pick("selfie", f)} capture="user" />
+        <PhotoSlot label={docType === "passport" ? "Passport data page" : "Front of ID"} icon={IdCard} preview={previews.front} loading={busy === "front"} onPick={(f) => pick("front", f)} />
+        {needsBack && <PhotoSlot label="Back of ID" icon={IdCard} preview={previews.back} loading={busy === "back"} onPick={(f) => pick("back", f)} />}
+        <PhotoSlot label="Passport photograph" hint="A clear photo of your face" icon={Camera} preview={previews.selfie} loading={busy === "selfie"} onPick={(f) => pick("selfie", f)} capture="user" />
       </div>
 
       <ul className="space-y-1.5 text-xs text-slate">
         <li>• All four corners of the document must be visible, with no glare or blur.</li>
-        <li>• In the selfie, your face and the document must both be clearly readable.</li>
+        <li>• Passport photograph: a recent, clear photo of your face on a plain background, with no hat or sunglasses.</li>
       </ul>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -118,6 +118,7 @@ export function KycForm({ defaultName, defaultCountry }: { defaultName: string; 
 
 function PhotoSlot({
   label,
+  hint,
   icon: Icon,
   preview,
   loading,
@@ -125,6 +126,7 @@ function PhotoSlot({
   capture,
 }: {
   label: string;
+  hint?: string;
   icon: typeof Camera;
   preview?: string;
   loading: boolean;
@@ -152,7 +154,7 @@ function PhotoSlot({
         <>
           <Icon className="size-7 text-brand-400" />
           <span className="text-sm font-medium text-white">{loading ? "Processing…" : label}</span>
-          <span className="text-xs text-muted">Tap to take or upload a photo</span>
+          <span className="text-xs text-muted">{hint ?? "Tap to take or upload a photo"}</span>
         </>
       )}
       <input
