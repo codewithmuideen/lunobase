@@ -103,6 +103,11 @@
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
   }
+  /* Grid items default to min-width:auto, so a wide table or long word inside one
+     stretches the whole column past the screen on phones. Let them shrink instead. */
+  :where(.grid) > * {
+    min-width: 0;
+  }
   body {
     @apply bg-ink-900 text-[#e7eaf2] antialiased;
     font-feature-settings: "cv11", "ss01";

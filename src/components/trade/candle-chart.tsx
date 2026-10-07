@@ -137,7 +137,7 @@ export function CandleChart({ coinId, livePrice }: { coinId: string; livePrice?:
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between gap-2 border-b border-white/5 px-3 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 px-3 py-2">
         <div className="flex gap-0.5">
           {RANGES.map((r) => (
             <button

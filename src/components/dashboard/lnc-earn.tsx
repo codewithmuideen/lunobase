@@ -39,7 +39,7 @@ export function LncShare({ link, claimed }: { link: string; claimed: ShareChanne
   };
 
   return (
-    <div className="grid grid-cols-1 gap-2.5 min-[420px]:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-2.5 min-[420px]:grid-cols-2">
       {channels.map(({ id, label, href, icon: Icon, tone }) => {
         const claimedToday = done.includes(id);
         return (
@@ -56,11 +56,11 @@ export function LncShare({ link, claimed }: { link: string; claimed: ShareChanne
             <span className="min-w-0">
               <span className="block truncate text-sm font-semibold text-white">{label}</span>
               {claimedToday ? (
-                <span className="flex items-center gap-1 text-xs text-up">
+                <span className="flex items-center gap-1 whitespace-nowrap text-xs text-up">
                   <Check className="size-3.5" /> Earned today
                 </span>
               ) : (
-                <span className="text-xs font-medium text-brand-300">
+                <span className="whitespace-nowrap text-xs font-medium text-brand-300">
                   +{LNC.rewards.share} {LNC.symbol}
                 </span>
               )}
