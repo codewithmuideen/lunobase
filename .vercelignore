@@ -9,3 +9,5 @@ node_modules
 index.html
 vite.config.js
 eslint.config.js
+
+cpanel-build

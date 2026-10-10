@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== "production";
+// BUILD_TARGET=cpanel produces a self-contained Node server (.next/standalone) for cPanel "Setup Node.js App".
+const isCpanel = process.env.BUILD_TARGET === "cpanel";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseWs = supabaseUrl.replace(/^https:/, "wss:");
 
@@ -36,7 +38,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  ...(isCpanel ? { output: "standalone" as const } : {}),
   images: {
+    // Shared hosting has no image optimiser binary, so serve images as they are there.
+    unoptimized: isCpanel,
     remotePatterns: [
       { protocol: "https", hostname: "coin-images.coingecko.com" },
       { protocol: "https", hostname: "assets.coingecko.com" },
